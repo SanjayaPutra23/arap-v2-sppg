@@ -47,11 +47,11 @@ Deploy kode ARAP v2 pada direktori server (misal `/var/www/arap-v2`):
 
 ```bash
 cd /var/www
-git clone https://github.com/SanjayaPutra23/arap-attendance-management.git arap-v2
+git clone https://github.com/SanjayaPutra23/arap-v2-sppg.git arap-v2
 cd arap-v2
 
 # Pastikan berada pada branch rilis v2
-git checkout v2/laravel-13-modernization
+git checkout main
 ```
 
 ---

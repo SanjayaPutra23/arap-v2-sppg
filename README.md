@@ -22,7 +22,7 @@ Sistem ini dirancang 100% berfokus pada operasional fisik dapur: integrasi langs
 - **Backend Framework:** Laravel 13.x
 - **Runtime Environment:** PHP 8.5 (NTS Win32 / Linux x64)
 - **Ekstensi PHP Aktif:** `sockets`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`, `mbstring`, `fileinfo`, `gd`, `openssl`, `intl`, `bcmath`, `zip`
-- **Autentikasi & RBAC:** Laravel Fortify v1.43 (Mendukung login fleksibel via Email atau Nomor Induk / NIK, Role Gates: `ultraman`, `umum`, `staff-access`, `user`)
+- **Autentikasi & RBAC:** Laravel Fortify v1.43 (Mendukung login fleksibel via Email atau Nomor Induk / NIK, Role Gates: `ultraman`, `staff-access`, `user`)
 - **Frontend & Assets:** Bootstrap 5.3, Bootstrap Icons, Custom SCSS Theme, Rollup/Vite 8
 - **Export & Pelaporan:** `barryvdh/laravel-dompdf:^3.0` (PDF Landscape A4 & Portrait Slip), `maatwebsite/excel:^3.1` (OpenXML Spreadsheet)
 - **Komunikasi Mesin Fisik:** Driver UDP Socket ZKTeco Native PHP 8.5 (`app/Services/ZKTeco/`) tanpa dependensi abandoned
@@ -77,8 +77,9 @@ Sistem ini dirancang 100% berfokus pada operasional fisik dapur: integrasi langs
 Gunakan environment Laragon dengan PHP 8.5.12:
 
 ```powershell
-# 1. Masuk ke direktori proyek
-cd C:\laragon\www\arap-v2
+# 1. Clone repositori resmi & masuk ke direktori proyek
+git clone https://github.com/SanjayaPutra23/arap-v2-sppg.git arap-v2
+cd arap-v2
 
 # 2. Salin environment dan buat application key
 copy .env.example .env
@@ -138,10 +139,9 @@ Cakupan pengujian meliputi:
 
 ## 👥 Hak Akses & Peran Pengguna (Roles)
 
-1. **Ultraman (Super Admin):** Memiliki akses penuh ke seluruh modul, pengaturan mesin, kelola pegawai/Officer, review izin, pengaturan jam kerja, dan hari libur.
-2. **Umum (Admin Operasional):** Mengelola operasional harian, data pegawai, approval izin, dan rekapitulasi.
-3. **Officer / Tata Usaha (Staff Access):** Memantau dashboard kehadiran, melihat arsip log fingerprint, verifikasi izin, dan mencetak laporan rekapitulasi.
-4. **User (Relawan Operasional Dapur):** Melihat jadwal jam kerja divisi, mengajukan izin/sakit, dan mengganti kata sandi mandiri.
+1. **Ultraman (Super Admin / Pengelola SPPG):** Memiliki hak akses penuh ke seluruh modul sistem: kelola mesin fingerprint & sinkronisasi data, master data pegawai & akun login, approval permohonan izin/sakit, jam kerja 8 divisi, kelola hari libur nasional, dan seluruh rekapitulasi.
+2. **Officer (Tata Usaha & Pengawas Lapangan):** Staf operasional dengan hak akses pemantauan dashboard kehadiran harian, penelusuran arsip log fingerprint, verifikasi izin relawan, dan pencetakan laporan rekapitulasi bulanan/mingguan (Excel & PDF).
+3. **User (Relawan Operasional Dapur):** Relawan dapur dengan hak akses personal untuk melihat jadwal jam kerja divisi di dashboard, mengajukan permohonan izin/sakit mandiri dengan lampiran surat dokter, dan memperbarui kata sandi akun login.
 
 ---
 

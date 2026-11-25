@@ -30,3 +30,6 @@ Thumbs.db
 !/storage/app/private/.gitkeep
 /storage/framework/locks/*
 !/storage/framework/locks/.gitkeep
+
+/database_sql/
+*.sql

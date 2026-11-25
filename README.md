@@ -76,6 +76,11 @@ Sistem ini dirancang 100% berfokus pada operasional fisik dapur: integrasi langs
 
 Gunakan environment Laragon dengan PHP 8.5.12:
 
+> [!IMPORTANT]
+> **Catatan Privasi & Permintaan File Database:**  
+> Berkas dump SQL operasional (`database_sql/arap.sql`) tidak disertakan di repositori GitHub demi menjaga kerahasiaan dan privasi data relawan serta pegawai SPPG Kalisapu.  
+> Jika Anda membutuhkan file database untuk keperluan instalasi, pengembangan, atau pengujian, silakan hubungi pengembang melalui email: **masjaynew9@gmail.com**.
+
 ```powershell
 # 1. Clone repositori resmi & masuk ke direktori proyek
 git clone https://github.com/SanjayaPutra23/arap-v2-sppg.git arap-v2
@@ -87,6 +92,7 @@ copy .env.example .env
 
 # 3. Setup Database arap_v2_dev & Migrasi
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS arap_v2_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# Jika telah memperoleh file database arap.sql dari pengembang via email:
 cmd /c "mysql -u root --default-character-set=utf8mb4 arap_v2_dev < database_sql\arap.sql"
 & "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan migrate
 

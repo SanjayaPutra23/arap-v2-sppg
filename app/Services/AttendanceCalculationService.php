@@ -16,6 +16,32 @@ class AttendanceCalculationService
 
     public const DEFAULT_JAM_PULANG = '17:00:00';
 
+    public const STATUS_HADIR = 'hadir';
+
+    public const STATUS_TEPAT_WAKTU = 'tepat_waktu';
+
+    public const STATUS_TERLAMBAT = 'terlambat';
+
+    public const STATUS_PULANG_AWAL = 'pulang_awal';
+
+    public const STATUS_TERLAMBAT_PULANG_AWAL = 'terlambat_pulang_awal';
+
+    public const STATUS_IZIN = 'izin';
+
+    public const STATUS_SAKIT = 'sakit';
+
+    public const STATUS_ALPHA = 'alpha';
+
+    /**
+     * Seluruh status yang dianggap hadir tepat waktu (skor 1.00).
+     *
+     * @return list<string>
+     */
+    public static function onTimeStatuses(): array
+    {
+        return [self::STATUS_HADIR, self::STATUS_TEPAT_WAKTU];
+    }
+
     /**
      * Poin presensi SPPG Kalisapu.
      */

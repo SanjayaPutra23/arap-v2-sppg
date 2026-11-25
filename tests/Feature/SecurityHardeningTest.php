@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\AttendanceLocation;
 use App\Models\Peserta;
 use App\Models\Role;
 use App\Models\User;
@@ -54,15 +53,6 @@ class SecurityHardeningTest extends TestCase
             'email' => 'umum@arap.local',
         ]);
         $this->umumUser->roles()->attach($roleUltraman);
-
-        AttendanceLocation::create([
-            'name' => 'SPPG Kalisapu',
-            'latitude' => -6.9885000,
-            'longitude' => 109.1378000,
-            'radius_meters' => 100,
-            'max_gps_accuracy_meters' => 50,
-            'is_active' => true,
-        ]);
     }
 
     /**
@@ -76,19 +66,7 @@ class SecurityHardeningTest extends TestCase
         $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
         $response->assertHeader('X-Content-Type-Options', 'nosniff');
         $response->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->assertHeader('Permissions-Policy', 'camera=(self), geolocation=(self), microphone=()');
-    }
-
-    /**
-     * Verifikasi bahwa halaman presensi mobile PWA tidak memiliki input file galeri.
-     */
-    public function test_mobile_attendance_view_strictly_omits_file_input(): void
-    {
-        $response = $this->actingAs($this->normalUser)->get('/mobile-attendance');
-
-        $response->assertStatus(200);
-        $response->assertDontSee('type="file"', false);
-        $response->assertDontSee("type='file'", false);
+        $response->assertHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=()');
     }
 
     /**
@@ -97,14 +75,12 @@ class SecurityHardeningTest extends TestCase
     public function test_rbac_user_role_is_forbidden_on_all_admin_endpoints(): void
     {
         $adminRoutes = [
-            '/admin/monitoring',
             '/admin/pegawai',
             '/admin/izin',
             '/admin/arsip-fingerprint',
             '/admin/rekap',
             '/admin/rekap/export/excel',
             '/admin/rekap/export/pdf',
-            '/admin/settings/locations',
             '/admin/settings/working-hours',
         ];
 
@@ -120,39 +96,13 @@ class SecurityHardeningTest extends TestCase
     public function test_rbac_officer_role_can_access_monitoring_and_rekap_but_forbidden_on_pegawai_and_settings(): void
     {
         // Allowed for staff-access (Officer):
-        $this->actingAs($this->officerUser)->get('/admin/monitoring')->assertOk();
         $this->actingAs($this->officerUser)->get('/admin/rekap')->assertOk();
         $this->actingAs($this->officerUser)->get('/admin/izin')->assertOk();
         $this->actingAs($this->officerUser)->get('/admin/arsip-fingerprint')->assertOk();
 
         // Forbidden for Officer (restricted to can:umum):
         $this->actingAs($this->officerUser)->get('/admin/pegawai')->assertForbidden();
-        $this->actingAs($this->officerUser)->get('/admin/settings/locations')->assertForbidden();
         $this->actingAs($this->officerUser)->get('/admin/settings/working-hours')->assertForbidden();
-    }
-
-    /**
-     * Verifikasi file palsu (skrip text/PHP yang dinamai .jpg) ditolak saat submit presensi mobile.
-     */
-    public function test_fake_image_payload_is_rejected_on_mobile_attendance(): void
-    {
-        $fakeJpg = UploadedFile::fake()->createWithContent(
-            'fake_selfie.jpg',
-            "<?php echo 'malicious_script'; ",
-            'text/x-php'
-        );
-
-        $response = $this->actingAs($this->normalUser)->post('/mobile-attendance/submit', [
-            'type' => 'check_in',
-            'latitude' => -6.9885000,
-            'longitude' => 109.1378000,
-            'accuracy' => 10,
-            'photo' => $fakeJpg,
-        ], ['Accept' => 'application/json']);
-
-        $response->assertStatus(422);
-        $response->assertJson(['success' => false]);
-        $this->assertStringContainsString('bukan format gambar valid', (string) $response->json('message'));
     }
 
     /**

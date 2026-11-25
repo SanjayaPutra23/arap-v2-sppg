@@ -38,14 +38,6 @@ return [
             'report' => false,
         ],
 
-        'attendance_photos' => [
-            'driver' => 'local',
-            'root' => storage_path('app/private/attendance_photos'),
-            'visibility' => 'private',
-            'throw' => false,
-            'report' => false,
-        ],
-
         'izin_attachments' => [
             'driver' => 'local',
             'root' => storage_path('app/private/izin_attachments'),

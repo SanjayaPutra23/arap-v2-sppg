@@ -2,18 +2,14 @@
 
 use App\Http\Controllers\Admin\AdminIzinController;
 use App\Http\Controllers\Admin\ArsipFingerprintController;
-use App\Http\Controllers\Admin\AttendanceLocationController;
 use App\Http\Controllers\Admin\LiburController;
 use App\Http\Controllers\Admin\MesinController;
-use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\PegawaiController;
 use App\Http\Controllers\Admin\RekapController;
 use App\Http\Controllers\Admin\WorkingHoursSettingController;
-use App\Http\Controllers\AttendancePhotoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IzinAttachmentController;
 use App\Http\Controllers\IzinController;
-use App\Http\Controllers\MobileAttendanceController;
 use App\Http\Controllers\ProfilePasswordController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,14 +17,6 @@ Route::redirect('/', '/dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Mobile Attendance (PWA)
-    Route::get('/mobile-attendance', [MobileAttendanceController::class, 'index'])->name('mobile-attendance.index');
-    Route::post('/mobile-attendance/submit', [MobileAttendanceController::class, 'store'])
-        ->middleware('throttle:20,1')
-        ->name('mobile-attendance.store');
-    Route::get('/mobile-attendance/history', [MobileAttendanceController::class, 'history'])->name('mobile-attendance.history');
-    Route::get('/mobile-attendance/history/pdf', [MobileAttendanceController::class, 'exportMyRecapPdf'])->name('mobile-attendance.history.pdf');
 
     // Permohonan Izin & Sakit (Relawan)
     Route::get('/izin', [IzinController::class, 'index'])->name('izin.index');
@@ -39,17 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/password', [ProfilePasswordController::class, 'edit'])->name('profile.password.edit');
     Route::put('/profile/password', [ProfilePasswordController::class, 'update'])->name('profile.password.update');
 
-    // Private Attendance Photos & Izin Attachments (Authorized Streams Anti-IDOR)
-    Route::get('/attendance-photos/{attendancePhoto}', [AttendancePhotoController::class, 'show'])->name('attendance-photos.show');
+    // Private Izin Attachments (Authorized Streams Anti-IDOR)
     Route::get('/izin-attachments/{permohonanIzin}', [IzinAttachmentController::class, 'show'])->name('izin-attachments.show');
 
     // Admin & Staff Operations
     Route::prefix('admin')->name('admin.')->group(function () {
-        // Daily Monitoring & Leaflet Map (Staff Access: Ultraman, Umum, Officer, Tata Usaha, Akademik)
-        Route::get('/monitoring', [MonitoringController::class, 'index'])
-            ->middleware('can:staff-access')
-            ->name('monitoring.index');
-
         // Staff Access: Verifikasi Izin, Arsip Fingerprint, dan Rekapitulasi Periode 20-19
         Route::middleware('can:staff-access')->group(function () {
             // Verifikasi Izin & Sakit (View)
@@ -102,13 +84,8 @@ Route::middleware('auth')->group(function () {
                 Route::post('/{mesin}/upload-usb', [MesinController::class, 'uploadUsb'])->name('upload-usb');
             });
 
-            // Settings: Geofence Locations & Working Hours
+            // Settings: Working Hours
             Route::prefix('settings')->name('settings.')->group(function () {
-                Route::get('/locations', [AttendanceLocationController::class, 'index'])->name('locations.index');
-                Route::post('/locations', [AttendanceLocationController::class, 'store'])->name('locations.store');
-                Route::put('/locations/{location}', [AttendanceLocationController::class, 'update'])->name('locations.update');
-                Route::patch('/locations/{location}/toggle', [AttendanceLocationController::class, 'toggleActive'])->name('locations.toggle');
-
                 Route::get('/working-hours', [WorkingHoursSettingController::class, 'index'])->name('working-hours.index');
                 Route::post('/working-hours', [WorkingHoursSettingController::class, 'update'])->name('working-hours.update');
             });

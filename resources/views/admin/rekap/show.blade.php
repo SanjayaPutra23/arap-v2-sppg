@@ -73,9 +73,7 @@
                     <span class="text-muted small fw-semibold">Total Poin Terkumpul</span>
                     <div class="h2 fw-bold text-primary my-1">{{ number_format($record['total_points'], 2) }} Poin</div>
                     <small class="text-muted">
-                        Sumber: <span class="badge bg-primary-subtle text-primary">{{ $record['sources']['mobile'] }} Mobile</span>
-                        &bull;
-                        <span class="badge bg-success-subtle text-success">{{ $record['sources']['fingerprint'] }} Mesin Fisik</span>
+                        Sumber: <span class="badge bg-success-subtle text-success">{{ $record['sources']['fingerprint'] }} Mesin Fisik</span>
                     </small>
                 </div>
             </div>
@@ -176,9 +174,7 @@
                                 @endif
                             </td>
                             <td>
-                                @if($source === 'Mobile')
-                                    <span class="badge bg-primary"><i class="bi bi-phone me-1"></i> Mobile PWA</span>
-                                @elseif($source === 'Fingerprint')
+                                @if($source === 'Fingerprint')
                                     <span class="badge bg-success"><i class="bi bi-fingerprint me-1"></i> Mesin Fisik</span>
                                 @elseif($source === 'Izin')
                                     <span class="badge bg-info text-dark"><i class="bi bi-file-medical me-1"></i> Surat Izin</span>

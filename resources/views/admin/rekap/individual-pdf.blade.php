@@ -197,12 +197,12 @@
         </tr>
         <tr>
             <td>
-                <span class="metric-label">Presensi Mobile PWA</span>
-                <span class="metric-val">{{ $record['sources']['mobile'] }} <span style="font-size: 8pt; font-weight: normal;">Log</span></span>
-            </td>
-            <td>
                 <span class="metric-label">Mesin Fisik (ZKTeco)</span>
                 <span class="metric-val">{{ $record['sources']['fingerprint'] }} <span style="font-size: 8pt; font-weight: normal;">Log</span></span>
+            </td>
+            <td>
+                <span class="metric-label">Total Kehadiran</span>
+                <span class="metric-val">{{ $record['total_hadir'] }} <span style="font-size: 8pt; font-weight: normal;">Hari</span></span>
             </td>
             <td>
                 <span class="metric-label">Rincian Izin / Sakit</span>
@@ -270,9 +270,7 @@
                     <td class="text-center font-mono">{{ $checkIn !== '-' ? $checkIn : '-' }}</td>
                     <td class="text-center font-mono">{{ $checkOut !== '-' ? $checkOut : '-' }}</td>
                     <td class="text-center">
-                        @if($source === 'Mobile')
-                            Mobile PWA
-                        @elseif($source === 'Fingerprint')
+                        @if($source === 'Fingerprint')
                             Mesin Fisik
                         @elseif($source === 'Izin')
                             Surat Izin

@@ -1,6 +1,8 @@
-# ARAP v2 — Aplikasi Presensi Relawan & Pegawai SPPG Kalisapu
+# ARAP SPPG Kalisapu — Sistem Presensi Mesin Fingerprint & Rekapitulasi Kehadiran Relawan
 
-ARAP (Aplikasi Relawan & Pegawai) versi 2 merupakan modernisasi menyeluruh sistem presensi untuk **Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**, dibangun dengan arsitektur modern berbasis **Laravel 13.x**, **PHP 8.5.12**, **Bootstrap 5.3 + SCSS**, **Vite**, dan arsitektur **Progressive Web App (PWA)** dengan Geofencing & Foto Selfie langsung.
+ARAP (Aplikasi Relawan & Pegawai) versi 2.0 merupakan modernisasi menyeluruh sistem presensi dan manajemen kehadiran bagi **Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**, Kabupaten Tegal. Dibangun dengan arsitektur modern berbasis **Laravel 13.x**, **PHP 8.5**, **Bootstrap 5.3 + SCSS**, dan **Vite 8**.
+
+Sistem ini dirancang 100% berfokus pada operasional fisik dapur: integrasi langsung dengan **Mesin Sidik Jari (Fingerprint) ZKTeco**, pengelolaan permohonan izin/sakit dengan bukti surat dokter, manajemen data pegawai/Officer, serta mesin rekapitulasi poin kehadiran periode bulanan (cut-off 20–19) & mingguan dengan ekspor resmi Excel dan PDF.
 
 ---
 
@@ -8,130 +10,143 @@ ARAP (Aplikasi Relawan & Pegawai) versi 2 merupakan modernisasi menyeluruh siste
 
 | Dokumen | Deskripsi | Tautan Berkas |
 | :--- | :--- | :---: |
-| **Panduan Deployment** | Panduan server Linux, Nginx HTTPS, migrasi DB non-destruktif, UAT fisik, & rollback | [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) |
-| **Manual Pengguna & Admin** | Panduan operasional ramah staf: Relawan/Officer (PWA/Selfie/GPS) & Admin TU (Monitoring/Rekap) | [`docs/USER_ADMIN_MANUAL.md`](docs/USER_ADMIN_MANUAL.md) |
-| **Laporan QA & Security** | Laporan audit keamanan (RBAC/IDOR/Headers), benchmark query DB nyata, & regresi | [`docs/PHASE6_QA_REPORT.md`](docs/PHASE6_QA_REPORT.md) |
-| **Arsitektur Sistem v2** | Dokumen arsitektur awal, perancangan 4 tabel baru, dan komparasi v1 vs v2 | [`docs/PHASE1_ARCHITECTURE_PLAN.md`](docs/PHASE1_ARCHITECTURE_PLAN.md) |
-| **Template Produksi** | Konfigurasi server Nginx, Environment Produksi, dan Skrip Backup Otomatis | [`.env.production.example`](.env.production.example) & [`deploy/`](deploy/) |
+| **Buku Manual Pengguna & Admin** | Panduan operasional ramah staf untuk Relawan, Officer, dan Tata Usaha (Pak Aslap) | [`docs/USER_ADMIN_MANUAL.md`](docs/USER_ADMIN_MANUAL.md) |
+| **Panduan Deployment Server** | Konfigurasi production Linux, Nginx, PHP-FPM 8.5, migrasi DB non-destruktif & backup | [`docs/DEPLOYMENT_GUIDE.md`](docs/DEPLOYMENT_GUIDE.md) |
+| **Laporan QA & Keamanan** | Hasil audit keamanan, benchmark query data nyata (11.000+ pools), dan automated test suite | [`docs/PHASE6_QA_REPORT.md`](docs/PHASE6_QA_REPORT.md) |
+| **Template Server Produksi** | Contoh konfigurasi environment produksi, server block Nginx, dan skrip backup database | [`.env.production.example`](.env.production.example) & [`deploy/`](deploy/) |
 
 ---
 
 ## 🛠️ Stack Teknologi
 
-- **Backend Framework:** Laravel 13.43.0
-- **Runtime Environment:** PHP 8.5.12 (NTS Win32 VS17 x64)
-- **Ekstensi PHP Aktif:** `sockets`, `zip`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`, `mbstring`, `fileinfo`, `gd`, `openssl`, `intl`, `bcmath`
-- **Autentikasi & RBAC:** Laravel Fortify v1.43 (Mendukung login via Email / NIK & Role Gates: `ultraman`, `umum`, `staff-access`, `user`)
-- **Frontend & PWA:** Bootstrap 5.3, Bootstrap Icons, Leaflet.js, Vite 8, Web App Manifest & Service Worker
-- **Export & Reporting:** `barryvdh/laravel-dompdf:^3.0`, `maatwebsite/excel:^3.1`
-- **Penyimpanan Berkas Privat:** Private disk `attendance_photos` (`storage/app/private/attendance_photos`) & `izin_attachments` (`storage/app/private/izin_attachments`)
+- **Backend Framework:** Laravel 13.x
+- **Runtime Environment:** PHP 8.5 (NTS Win32 / Linux x64)
+- **Ekstensi PHP Aktif:** `sockets`, `pdo_mysql`, `pdo_sqlite`, `sqlite3`, `mbstring`, `fileinfo`, `gd`, `openssl`, `intl`, `bcmath`, `zip`
+- **Autentikasi & RBAC:** Laravel Fortify v1.43 (Mendukung login fleksibel via Email atau Nomor Induk / NIK, Role Gates: `ultraman`, `umum`, `staff-access`, `user`)
+- **Frontend & Assets:** Bootstrap 5.3, Bootstrap Icons, Custom SCSS Theme, Rollup/Vite 8
+- **Export & Pelaporan:** `barryvdh/laravel-dompdf:^3.0` (PDF Landscape A4 & Portrait Slip), `maatwebsite/excel:^3.1` (OpenXML Spreadsheet)
+- **Komunikasi Mesin Fisik:** Driver UDP Socket ZKTeco Native PHP 8.5 (`app/Services/ZKTeco/`) tanpa dependensi abandoned
+- **Penyimpanan Berkas Privat:** Private disk `izin_attachments` (`storage/app/private/izin_attachments`) dengan otorisasi Anti-IDOR
 
 ---
 
-## 🚀 Panduan Setup & Eksekusi Lokal
+## ✨ Fitur-Fitur Utama
 
-Karena sistem memiliki multi-versi PHP pada Laragon, selalu gunakan binary PHP 8.5.12 secara eksplisit:
+### 1. Integrasi Mesin Fingerprint ZKTeco Native (PHP 8.5)
+- **Koneksi UDP Langsung:** Terhubung langsung ke perangkat ZKTeco (seperti unit `FPDAPUR1` di IP `192.168.1.8:4370`) via raw socket.
+- **Check Koneksi:** Tombol uji koneksi real-time langsung dari panel admin.
+- **Tarik Data Anti-Duplikasi:** Sinkronisasi log presensi dari mesin ke tabel historis `pools` secara cerdas tanpa membuat duplikasi data.
+- **Fallback Upload USB (`.dat`):** Mendukung unggah berkas log offline Flashdisk jika jaringan kabel/WiFi terputus.
+
+### 2. Engine Rekapitulasi Presensi Periode 20–19 & Mingguan
+- **Cut-Off Bulanan Resmi (20 s.d. 19):** Otomatis menghitung kehadiran per siklus bulanan SPPG (misal periode 20 Oktober s.d. 19 November).
+- **Mode Rekap Mingguan:** Mode alternatif Senin s.d. Minggu untuk evaluasi cepat mingguan dapur.
+- **Prioritas Penilaian Kehadiran:**
+  1. *Mesin Fingerprint (`pools`):* Evaluasi jam tap masuk vs jam kerja divisi.
+  2. *Surat Izin / Sakit Disetujui (`permohonan_izins`):* Diakui resmi tanpa penalti alpha.
+  3. *Hari Libur Nasional (`liburs`):* Libur resmi SPPG (tidak dihitung alpha).
+  4. *Alpha:* Hari kerja tanpa tap sidik jari dan tanpa izin resmi.
+- **Sistem Poin Kinerja:**
+  - `1.00 Poin` : Hadir Tepat Waktu
+  - `0.80 Poin` : Terlambat Datang atau Pulang Lebih Awal
+  - `0.00 Poin` : Izin, Sakit, atau Alpha
+- **Ekspor Dokumen Resmi:** Cetak Rekapitulasi Bulanan ke format Microsoft Excel (.xlsx) dan PDF Resmi Landscape A4, serta Cetak PDF Rincian Presensi Individu.
+
+### 3. Pengelolaan Master Pegawai / Relawan & Officer
+- **Data Induk Lengkap:** Pengelolaan nama, Nomor Induk (NIK), UID mesin, divisi/bagian, nomor telepon, dan status akun login.
+- **Penyederhanaan Form:** Penggunaan nomor induk/UID pendek (misal `1051`) dan pembuatan akun otomatis dengan password default yang seragam.
+- **Soft-Deactivate (`is_active`):** Pegawai yang sudah tidak aktif dapat dinonaktifkan tanpa merusak riwayat log sidik jari historis (proteksi integritas basis data).
+- **Deteksi Orphan UID:** Sistem secara otomatis mendeteksi jika ada sidik jari tak dikenal yang melakukan tap di mesin tetapi nomor UID-nya belum dipetakan ke profil relawan.
+
+### 4. Modul Permohonan Izin / Sakit Mandiri
+- **Pengajuan Mandiri oleh Relawan:** Relawan dapat mengajukan izin atau sakit dari akun masing-masing dengan mengunggah lampiran surat dokter (PDF, JPG, PNG).
+- **Verifikasi Tata Usaha:** Tim TU / Admin memiliki panel khusus untuk menyetujui (*Approve*) atau menolak (*Reject*) pengajuan izin dengan catatan verifikator.
+- **Proteksi Akses Berkas (Anti-IDOR):** Berkas surat dokter disimpan pada private disk dan hanya dapat diunduh oleh pemilik akun atau staf TU yang berwenang.
+
+### 5. Kelola Hari Libur Nasional & Jam Kerja
+- **Manajemen Hari Libur (`liburs`):** CRUD hari libur nasional serta tombol sinkronisasi otomatis via API Libur Nasional Indonesia.
+- **Jam Kerja Dinamis per 8 Divisi:** Pengaturan jam masuk, jam pulang, dan toleransi keterlambatan untuk divisi: Officer, Persiapan, Pengolahan, Pemorsian, Distribusi, Kebersihan, Security, dan Ompreng.
+
+### 6. Profil & Ganti Password Mandiri
+- Setiap relawan dan staf dapat mengganti kata sandi akun login mereka secara mandiri dari menu profil.
+
+---
+
+## 🚀 Panduan Instalasi & Eksekusi Lokal
+
+Gunakan environment Laragon dengan PHP 8.5.12:
 
 ```powershell
-# 1. Masuk ke direktori project
+# 1. Masuk ke direktori proyek
 cd C:\laragon\www\arap-v2
 
-# 2. Setup Environment
+# 2. Salin environment dan buat application key
 copy .env.example .env
 & "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan key:generate
 
-# 3. Setup Database arap_v2_dev & Migrasi Non-Destruktif
+# 3. Setup Database arap_v2_dev & Migrasi
 mysql -u root -e "CREATE DATABASE IF NOT EXISTS arap_v2_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 cmd /c "mysql -u root --default-character-set=utf8mb4 arap_v2_dev < database_sql\arap.sql"
 & "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan migrate
-& "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan db:seed --class=AttendanceLocationSeeder
 
-# 4. Instalasi Dependensi Composer
+# 4. Instalasi Dependensi PHP & JavaScript
 & "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" C:\ProgramData\ComposerSetup\bin\composer.phar install
-
-# 5. Instalasi & Build Asset Frontend
 npm install
 npm run build
 
+# 5. Jalankan Automated Test Suite
+& "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan test --compact
+
 # 6. Menjalankan Server Lokal
 & "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan serve
-
-# 7. Menjalankan Automated Test Suite
-& "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan test
 ```
 
 ---
 
 ## 🧪 Pengujian Otomatis (Automated Testing)
 
-Pengujian unit dan fitur berjalan otomatis pada database SQLite in-memory (`:memory:`) tanpa menyentuh database operasional MySQL (119 tests, 560 assertions, 100% lulus):
+Aplikasi memiliki rangkaian automated tests komprehensif pada database SQLite in-memory (`:memory:`) tanpa menyentuh database operasional MySQL:
 
 ```powershell
-& "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan test
+& "C:\laragon\bin\php\php-8.5.12-nts-Win32-vs17-x64\php.exe" artisan test --compact
 ```
 
+**Status Pengujian:** `132 passed (613 assertions)` — 100% lulus.
+
 Cakupan pengujian meliputi:
-- Redirect pengunjung (guest) ke form login
-- Rendering tampilan halaman login Bootstrap 5
-- Autentikasi email dan logout pengguna
-- Autentikasi menggunakan nomor identitas (NIK / UID relawan)
-- Otorisasi hak akses Role-Based Access Control (RBAC) Gates (`ultraman`, `umum`, `staff-access`, `user`)
-- Formula Geofencing Haversine, radius, dan validasi akurasi GPS
-- Kompresi foto selfie via `ext-gd` dan hashing SHA-256 ke private disk `attendance_photos`
-- Aturan perhitungan jam kerja per divisi/jabatan dan sistem poin (1.00 / 0.80 / 0.00)
-- Alur lengkap Check-in, Check-out, Anti-duplikasi, dan Audit Log
-- Proteksi otorisasi foto privat (Anti-IDOR)
-- Monitoring kehadiran admin harian, peta sebaran Leaflet, modal selfie, dan review audit log
-- Pengaturan master lokasi geofence SPPG dan pengaturan jam kerja divisi/Officer
-- CRUD Master Pegawai / Relawan & Officer (`pesertas` + sinkronisasi akun `users` & role) serta proteksi non-destruktif
-- Modul Permohonan Izin/Sakit mandiri relawan, upload berkas privat, pembatalan izin, serta review/approval Tata Usaha
-- Penelusuran arsip log fingerprint historis mesin `FPDAPUR1` (9.838 baris data)
-- Engine Rekapitulasi Kehadiran Gabungan periode 20 s.d. 19 (Mobile Attendance + Fingerprint + Izin Disetujui + Libur Nasional vs Alpha)
-- Ekspor laporan bulanan ke format Microsoft Excel (.xlsx) dan Dokumen PDF (Landscape A4)
+- Autentikasi multi-identitas (Login via NIK dan Email, Fortify rate-limiting)
+- Role-Based Access Control (RBAC) pada setiap guard dan route admin
+- Driver ZKTeco native parser dan UDP packet handling
+- Sinkronisasi data pools fingerprint anti-duplikasi & parsing berkas USB `.dat`
+- Pengujian isolasi data IDOR pada lampiran surat dokter
+- Integritas data pegawai, relasi akun pengguna, dan soft-deactivation
+- Uji presisi kalkulasi poin rekapitulasi 20–19 dan mode mingguan
+- Verifikasi bebas N+1 query pada seluruh halaman utama
+- Pengujian ekspor berkas Excel dan PDF
+- Pengujian siklus hidup kehadiran end-to-end (Tap Mesin + Izin + Rekap + Ganti Password)
 
 ---
 
-## 🖥️ Fitur Operasional & Modul Sistem
+## 🔒 Kebijakan Keamanan (Security Hardening)
 
-1. **Presensi Mobile PWA:**
-   - Geofencing cerdas dengan validasi GPS & akurasi radius dinamis.
-   - Kamera selfie langsung (WebRTC `getUserMedia`) anti-manipulasi galeri.
-   - Perhitungan otomatis status datang tepat waktu, terlambat, dan pulang awal.
-2. **Dashboard & Monitoring Admin:**
-   - Ringkasan KPI kehadiran harian dan breakdown divisi (termasuk filter khusus **Officer**).
-   - Peta sebaran kehadiran real-time berbasis Leaflet OpenStreetMap.
-   - Modal preview foto selfie privat dan log percobaan presensi ditolak.
-3. **Master Pegawai & Akun (`/admin/pegawai`):**
-   - Pengelolaan data relawan & Officer SPPG dengan filter divisi lengkap.
-   - Pembuatan dan sinkronisasi akun login (`users` & `role_user`) langsung dari form pegawai.
-   - Proteksi anti-hapus (non-destructive) bagi pegawai yang memiliki riwayat log absensi.
-4. **Permohonan Izin & Sakit (`/izin` & `/admin/izin`):**
-   - Pengajuan mandiri oleh relawan dengan unggah surat keterangan dokter/bukti (disk privat).
-   - Verifikasi dan persetujuan bertingkat oleh staf Tata Usaha.
-   - Proteksi Anti-IDOR pada endpoint unduh berkas lampiran.
-5. **Arsip Log Fingerprint (`/admin/arsip-fingerprint`):**
-   - Penelusuran arsip read-only untuk 9.838 baris log mesin fingerprint lama (`FPDAPUR1`).
-6. **Rekapitulasi Bulanan Gabungan 20–19 (`/admin/rekap`):**
-   - Engine kalkulasi gabungan: Presensi Mobile (Prioritas 1) + Fingerprint Mesin (Prioritas 2) + Izin Disetujui (Prioritas 3) + Libur Nasional (Prioritas 4).
-   - Perhitungan poin kehadiran akurat (1.00 tepat waktu, 0.80 terlambat/pulang cepat, 0.00 izin/sakit/alpha).
-   - Ekspor satu-klik ke format Excel (.xlsx via `maatwebsite/excel`) dan PDF Landscape resmi (`barryvdh/laravel-dompdf`).
-7. **Pengaturan Lokasi & Jam Kerja (`/admin/settings`):**
-   - Visual map picker koordinat latitude/longitude dan radius geofence.
-   - Konfigurasi batas jam datang dan pulang per divisi & Officer.
+- **Permissions-Policy:** Header HTTP disetel ke `camera=(), geolocation=(), microphone=()` untuk menutup penuh celah sensor perangkat pada server.
+- **Enterprise Headers:** `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
+- **Anti-IDOR File Streaming:** Seluruh dokumen lampiran disimpan di luar web root (`storage/app/private/`) dan diakses melalui controller yang memvalidasi kepemilikan data atau hak akses staf Tata Usaha.
+- **Anti SQL Injection & XSS:** Query binding Eloquent, validasi FormRequest yang ketat, dan sanitasi output Blade.
 
 ---
 
-## 📱 Fitur Mobile Attendance (PWA)
+## 👥 Hak Akses & Peran Pengguna (Roles)
 
-Sistem Mobile Attendance ARAP v2 mendukung check-in dan check-out mandiri untuk Relawan & Officer SPPG Kalisapu:
-1. **Validasi Geofence & GPS:** Menghitung jarak presisi ke titik sentral SPPG Kalisapu (default radius 100m, akurasi GPS maksimal 50m).
-2. **Kamera Selfie Langsung (Anti-Galeri):** Mewajibkan pengambilan foto dari WebRTC live camera (`getUserMedia`) tanpa akses input galeri file.
-3. **Persyaratan Secure Context:** Fitur kamera dan sensor geolokasi GPS browser memerlukan koneksi aman (**`http://localhost`** untuk development lokal, atau **`https://` dengan sertifikat SSL valid** pada lingkungan server staging/produksi).
-4. **Keamanan Foto Privat:** Foto presensi tersimpan di private disk `attendance_photos` dan hanya dapat diakses oleh pemilik presensi serta staf/admin yang terotorisasi.
+1. **Ultraman (Super Admin):** Memiliki akses penuh ke seluruh modul, pengaturan mesin, kelola pegawai/Officer, review izin, pengaturan jam kerja, dan hari libur.
+2. **Umum (Admin Operasional):** Mengelola operasional harian, data pegawai, approval izin, dan rekapitulasi.
+3. **Officer / Tata Usaha (Staff Access):** Memantau dashboard kehadiran, melihat arsip log fingerprint, verifikasi izin, dan mencetak laporan rekapitulasi.
+4. **User (Relawan Operasional Dapur):** Melihat jadwal jam kerja divisi, mengajukan izin/sakit, dan mengganti kata sandi mandiri.
 
 ---
 
-## 🔒 Kebijakan Integritas & Data
+## 🏢 Kepemilikan & Hak Cipta
 
-1. **Non-Destructive Database:** Database operasional `arap` serta file DDL `database_sql/arap.sql` dipertahankan 100% utuh tanpa penghapusan riwayat absensi mesin (`pools`: 9.838 baris) dan master pengguna (`pesertas`: 47 baris, `users`: 49 baris).
-2. **Dual-Repository Safety:** Source code legacy Laravel 8 tetap tersimpan di branch `main` pada `C:\laragon\www\Absensi` sebagai cadangan operasional. Seluruh modernisasi v2 dikembangkan pada branch `v2/laravel-13-modernization`.
+**Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**  
+Kecamatan Slawi, Kabupaten Tegal, Jawa Tengah  
+*Modernisasi Sistem Presensi ARAP v2.0*

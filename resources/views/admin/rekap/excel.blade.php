@@ -31,7 +31,6 @@
             <th style="border: 1px solid #000000; text-align: center;">Sakit</th>
             <th style="border: 1px solid #000000; text-align: center;">Alpha</th>
             <th style="border: 1px solid #000000; text-align: center;">Total Poin</th>
-            <th style="border: 1px solid #000000; text-align: center;">Mobile</th>
             <th style="border: 1px solid #000000; text-align: center;">Fingerprint</th>
         </tr>
     </thead>
@@ -50,7 +49,6 @@
                 <td style="border: 1px solid #000000; text-align: center;">{{ $row['sakit'] }}</td>
                 <td style="border: 1px solid #000000; text-align: center;">{{ $row['alpha'] }}</td>
                 <td style="border: 1px solid #000000; text-align: center; font-weight: bold;">{{ number_format($row['total_points'], 2) }}</td>
-                <td style="border: 1px solid #000000; text-align: center;">{{ $row['sources']['mobile'] }}</td>
                 <td style="border: 1px solid #000000; text-align: center;">{{ $row['sources']['fingerprint'] }}</td>
             </tr>
         @endforeach
@@ -63,7 +61,6 @@
             <td style="border: 1px solid #000000; text-align: center;">{{ $recap['summary']['total_sakit'] }}</td>
             <td style="border: 1px solid #000000; text-align: center;">{{ $recap['summary']['total_alpha'] }}</td>
             <td style="border: 1px solid #000000; text-align: center;">{{ number_format($recap['summary']['total_points'], 2) }}</td>
-            <td style="border: 1px solid #000000; text-align: center;">{{ $recap['summary']['source_mobile'] }}</td>
             <td style="border: 1px solid #000000; text-align: center;">{{ $recap['summary']['source_fingerprint'] }}</td>
         </tr>
     </tbody>

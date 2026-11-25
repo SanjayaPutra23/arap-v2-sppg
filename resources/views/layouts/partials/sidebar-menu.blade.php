@@ -7,21 +7,6 @@
     </li>
 
     <li class="nav-item">
-        <a href="{{ route('mobile-attendance.index') }}" class="nav-link {{ request()->routeIs('mobile-attendance.index') ? 'active' : '' }}">
-            <i class="bi bi-camera-fill text-primary"></i>
-            <span>Presensi Mobile</span>
-            <span class="badge bg-success ms-auto" style="font-size: 0.65rem;">PWA</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a href="{{ route('mobile-attendance.history') }}" class="nav-link {{ request()->routeIs('mobile-attendance.history*') ? 'active' : '' }}">
-            <i class="bi bi-calendar-check text-success"></i>
-            <span>Rekap & Riwayat Saya</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
         <a href="{{ route('izin.index') }}" class="nav-link {{ request()->routeIs('izin.*') ? 'active' : '' }}">
             <i class="bi bi-file-earmark-medical text-warning"></i>
             <span>Izin & Sakit</span>
@@ -30,14 +15,13 @@
 
     @can('staff-access')
     <li class="nav-header px-3 pt-3 pb-1 text-uppercase text-muted fw-bold" style="font-size: 0.7rem; letter-spacing: 0.5px;">
-        Administrasi & Monitoring
+        Administrasi & Rekap
     </li>
 
     <li class="nav-item">
-        <a href="{{ route('admin.monitoring.index') }}" class="nav-link {{ request()->routeIs('admin.monitoring.*') ? 'active' : '' }}">
-            <i class="bi bi-display text-primary"></i>
-            <span>Monitoring Presensi</span>
-            <span class="badge bg-danger ms-auto" style="font-size: 0.65rem;">Live</span>
+        <a href="{{ route('admin.rekap.index') }}" class="nav-link {{ request()->routeIs('admin.rekap.*') ? 'active' : '' }}">
+            <i class="bi bi-file-earmark-spreadsheet text-success"></i>
+            <span>Rekapitulasi (20-19)</span>
         </a>
     </li>
 
@@ -45,13 +29,12 @@
         <a href="{{ route('admin.izin.index') }}" class="nav-link {{ request()->routeIs('admin.izin.*') ? 'active' : '' }}">
             <i class="bi bi-file-earmark-check text-info"></i>
             <span>Verifikasi Izin</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a href="{{ route('admin.rekap.index') }}" class="nav-link {{ request()->routeIs('admin.rekap.*') ? 'active' : '' }}">
-            <i class="bi bi-file-earmark-spreadsheet text-success"></i>
-            <span>Rekapitulasi (20-19)</span>
+            @php
+                $pendingIzin = \App\Models\PermohonanIzin::where('status', \App\Models\PermohonanIzin::STATUS_MENUNGGU)->count();
+            @endphp
+            @if($pendingIzin > 0)
+                <span class="badge bg-warning text-dark ms-auto" style="font-size: 0.65rem;">{{ $pendingIzin }}</span>
+            @endif
         </a>
     </li>
 
@@ -79,13 +62,6 @@
         <a href="{{ route('admin.mesin.index') }}" class="nav-link {{ request()->routeIs('admin.mesin.*') ? 'active' : '' }}">
             <i class="bi bi-hdd-network text-info"></i>
             <span>Kelola Mesin & Sync</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a href="{{ route('admin.settings.locations.index') }}" class="nav-link {{ request()->routeIs('admin.settings.locations.*') ? 'active' : '' }}">
-            <i class="bi bi-pin-map text-danger"></i>
-            <span>Lokasi Geofence</span>
         </a>
     </li>
 

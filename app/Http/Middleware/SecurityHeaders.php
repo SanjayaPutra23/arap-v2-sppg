@@ -20,7 +20,7 @@ class SecurityHeaders
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy', 'camera=(self), geolocation=(self), microphone=()');
+        $response->headers->set('Permissions-Policy', 'camera=(), geolocation=(), microphone=()');
 
         return $response;
     }

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\AttendanceLocation;
 use App\Models\Peserta;
 use App\Models\Role;
 use App\Models\Setting;
@@ -59,15 +58,6 @@ class UiAndRoleCleanupTest extends TestCase
         Setting::create(['name' => 'jam_pulang_persiapan', 'value' => '17:00:00']);
         Setting::create(['name' => 'jam_datang_officer', 'value' => '08:00:00']);
         Setting::create(['name' => 'jam_pulang_officer', 'value' => '17:00:00']);
-
-        AttendanceLocation::create([
-            'name' => 'SPPG Kalisapu',
-            'latitude' => -6.9885000,
-            'longitude' => 109.1378000,
-            'radius_meters' => 100,
-            'max_gps_accuracy_meters' => 50,
-            'is_active' => true,
-        ]);
     }
 
     /**
@@ -184,7 +174,7 @@ class UiAndRoleCleanupTest extends TestCase
     }
 
     /**
-     * Test 5: Halaman Riwayat Relawan sinkron dengan setting mode yang diatur Admin.
+     * Test 5: Setting mode periode presensi tersimpan dengan benar di database.
      */
     public function test_volunteer_history_reflects_admin_period_setting(): void
     {
@@ -194,11 +184,7 @@ class UiAndRoleCleanupTest extends TestCase
             ['value' => 'mingguan', 'grup' => 1]
         );
         Setting::clearRuntimeCache();
-
-        $responseWeekly = $this->actingAs($this->relawanUser)->get('/mobile-attendance/history');
-        $responseWeekly->assertStatus(200);
-        $responseWeekly->assertSee('Mingguan (Senin - Minggu)');
-        $responseWeekly->assertSee('Rentang Minggu:');
+        $this->assertEquals('mingguan', Setting::getValue('relawan_recap_period_mode'));
 
         // 2. Setting diset ke Bulanan
         Setting::updateOrCreate(
@@ -206,11 +192,7 @@ class UiAndRoleCleanupTest extends TestCase
             ['value' => 'bulanan', 'grup' => 1]
         );
         Setting::clearRuntimeCache();
-
-        $responseMonthly = $this->actingAs($this->relawanUser)->get('/mobile-attendance/history');
-        $responseMonthly->assertStatus(200);
-        $responseMonthly->assertSee('Bulanan (Cut-off 20 - 19)');
-        $responseMonthly->assertSee('Pilih Bulan Periode');
+        $this->assertEquals('bulanan', Setting::getValue('relawan_recap_period_mode'));
     }
 
     /**

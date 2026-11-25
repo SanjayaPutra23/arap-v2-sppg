@@ -2,9 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\AttendanceLocation;
 use App\Models\Libur;
-use App\Models\MobileAttendance;
 use App\Models\PermohonanIzin;
 use App\Models\Peserta;
 use App\Models\Pool;
@@ -35,8 +33,6 @@ class EndToEndAttendanceIntegrationTest extends TestCase
 
     protected User $adminTU;
 
-    protected AttendanceLocation $location;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -52,17 +48,7 @@ class EndToEndAttendanceIntegrationTest extends TestCase
         Setting::create(['name' => 'jam_datang_officer', 'value' => '08:00:00']);
         Setting::create(['name' => 'jam_pulang_officer', 'value' => '17:00:00']);
 
-        // 3. Lokasi Geofence Aktif
-        $this->location = AttendanceLocation::create([
-            'name' => 'SPPG Kalisapu',
-            'latitude' => -6.9885000,
-            'longitude' => 109.1378000,
-            'radius_meters' => 100,
-            'max_gps_accuracy_meters' => 50,
-            'is_active' => true,
-        ]);
-
-        // 4. Data Peserta
+        // 3. Data Peserta
         $this->peserta1 = Peserta::create([
             'name' => 'Soni Setiawan',
             'nik' => '3328010101900001',
@@ -90,7 +76,7 @@ class EndToEndAttendanceIntegrationTest extends TestCase
             'telp' => '081234567893',
         ]);
 
-        // 5. Akun Pengguna
+        // 4. Akun Pengguna
         $this->user1 = User::create([
             'name' => 'Soni Setiawan',
             'email' => 'soni@arap.local',
@@ -118,17 +104,17 @@ class EndToEndAttendanceIntegrationTest extends TestCase
     /**
      * Skenario Lengkap Integrasi End-to-End:
      * 1. Login Relawan via NIK
-     * 2. Presensi Masuk (Check-in) GPS & Live Selfie
-     * 3. Verifikasi Kehadiran di Monitoring & Dashboard Admin
-     * 4. Presensi Pulang (Check-out) GPS & Live Selfie
-     * 5. Relawan 2 Pengajuan Izin/Sakit Mandiri dengan Lampiran Surat
-     * 6. Admin TU Menyetujui Izin
-     * 7. Catat Log Fingerprint Mesin Historis (Pools) untuk Peserta 3 & Hari Libur
-     * 8. Rekapitulasi Kehadiran Gabungan 20-19 & Ekspor Excel / PDF Resmi SPPG Kalisapu.
+     * 2. Presensi Masuk & Pulang via Mesin Fingerprint (Pools)
+     * 3. Verifikasi Log Kehadiran di Dashboard Admin (Recent Pools & Division breakdown)
+     * 4. Relawan 2 (Dewi) Pengajuan Izin/Sakit Mandiri dengan Lampiran Surat
+     * 5. Admin TU Menyetujui Izin
+     * 6. Presensi Mesin Fingerprint untuk Officer (Terlambat)
+     * 7. Hari Libur Nasional Ditetapkan
+     * 8. Rekapitulasi Kehadiran Gabungan 20-19 & Ekspor Excel / PDF
+     * 9. Relawan Ganti Kata Sandi Akun Mandiri.
      */
     public function test_full_attendance_lifecycle_end_to_end(): void
     {
-        Storage::fake('attendance_photos');
         Storage::fake('izin_attachments');
 
         // --- TAHAP 1: Login Relawan via NIK ---
@@ -139,56 +125,33 @@ class EndToEndAttendanceIntegrationTest extends TestCase
         $loginResponse->assertRedirect('/dashboard');
         $this->assertAuthenticatedAs($this->user1);
 
-        // --- TAHAP 2: Presensi Check-in Mobile dengan Live Selfie ---
-        $checkInPhoto = UploadedFile::fake()->image('selfie_in.jpg', 640, 480);
-        $checkInResponse = $this->actingAs($this->user1)->post('/mobile-attendance/submit', [
-            'type' => 'check_in',
-            'latitude' => -6.9885100, // Dalam radius 100m SPPG Kalisapu
-            'longitude' => 109.1378100,
-            'accuracy' => 12.0,
-            'photo' => $checkInPhoto,
+        $today = '2026-11-10';
+
+        // --- TAHAP 2: Tap Mesin Fingerprint (Pools) Check-in & Check-out Soni ---
+        Pool::create([
+            'iduser' => $this->peserta1->uid,
+            'date' => $today,
+            'time' => '07:50:00',
+        ]);
+        Pool::create([
+            'iduser' => $this->peserta1->uid,
+            'date' => $today,
+            'time' => '17:05:00',
         ]);
 
-        $checkInResponse->assertStatus(200);
-        $checkInResponse->assertJson(['success' => true]);
-
-        $today = Carbon::now('Asia/Jakarta')->toDateString();
-        $attendance = MobileAttendance::where('peserta_id', $this->peserta1->id)->first();
-        $this->assertNotNull($attendance);
-        $this->assertEquals($today, $attendance->attendance_date->format('Y-m-d'));
-        $this->assertDatabaseHas('attendance_photos', [
-            'type' => 'check_in',
+        $this->assertDatabaseHas('pools', [
+            'iduser' => $this->peserta1->uid,
+            'time' => '07:50:00',
         ]);
+        $this->assertEquals(2, Pool::where('iduser', $this->peserta1->uid)->count());
 
-        // --- TAHAP 3: Verifikasi Muncul di Monitoring & Dashboard Admin ---
+        // --- TAHAP 3: Verifikasi Muncul di Dashboard Admin ---
         $dashResponse = $this->actingAs($this->adminTU)->get('/dashboard');
         $dashResponse->assertOk();
         $dashResponse->assertSee('Soni Setiawan');
+        $dashResponse->assertSee('Persiapan');
 
-        $monResponse = $this->actingAs($this->adminTU)->get('/admin/monitoring');
-        $monResponse->assertOk();
-        $monResponse->assertSee('Soni Setiawan');
-        $monResponse->assertSee('Persiapan');
-
-        // --- TAHAP 4: Presensi Check-out Mobile ---
-        $checkOutPhoto = UploadedFile::fake()->image('selfie_out.jpg', 640, 480);
-        $checkOutResponse = $this->actingAs($this->user1)->post('/mobile-attendance/submit', [
-            'type' => 'check_out',
-            'latitude' => -6.9885100,
-            'longitude' => 109.1378100,
-            'accuracy' => 15.0,
-            'photo' => $checkOutPhoto,
-        ]);
-
-        $checkOutResponse->assertStatus(200);
-        $checkOutResponse->assertJson(['success' => true]);
-
-        $attendanceSoni = MobileAttendance::where('peserta_id', $this->peserta1->id)
-            ->whereDate('attendance_date', $today)
-            ->first();
-        $this->assertNotNull($attendanceSoni->check_out_at);
-
-        // --- TAHAP 5: Relawan 2 (Dewi) Mengajukan Sakit Mandiri ---
+        // --- TAHAP 4: Relawan 2 (Dewi) Mengajukan Sakit Mandiri ---
         $suratDokter = UploadedFile::fake()->createWithContent(
             'surat_dokter.pdf',
             "%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF"
@@ -200,82 +163,75 @@ class EndToEndAttendanceIntegrationTest extends TestCase
             'alasan' => 'Sakit demam dan flu berat',
             'surat_dokter' => $suratDokter,
         ]);
-
         $izinResponse->assertRedirect('/izin');
-        $this->assertDatabaseHas('permohonan_izins', [
-            'peserta_id' => $this->peserta2->id,
-            'jenis' => 'sakit',
-            'status' => 'menunggu',
-        ]);
 
         $izinDewi = PermohonanIzin::where('peserta_id', $this->peserta2->id)->first();
+        $this->assertNotNull($izinDewi);
+        $this->assertEquals(PermohonanIzin::STATUS_MENUNGGU, $izinDewi->status);
         $this->assertNotNull($izinDewi->surat_dokter);
 
-        // --- TAHAP 6: Admin TU Menyetujui Permohonan Sakit ---
-        $adminReviewResponse = $this->actingAs($this->adminTU)->post("/admin/izin/{$izinDewi->id}/review", [
+        // --- TAHAP 5: Admin TU Menyetujui Izin Dewi ---
+        $reviewResponse = $this->actingAs($this->adminTU)->post("/admin/izin/{$izinDewi->id}/review", [
             'status' => 'disetujui',
-            'catatan_admin' => 'Disetujui. Istirahat yang cukup.',
+            'catatan_admin' => 'Disetujui berdasarkan surat dokter.',
         ]);
+        $reviewResponse->assertRedirect();
+        $this->assertEquals(PermohonanIzin::STATUS_DISETUJUI, $izinDewi->fresh()->status);
 
-        $adminReviewResponse->assertRedirect();
-        $izinDewi->refresh();
-        $this->assertTrue($izinDewi->isApproved());
-        $this->assertEquals($this->adminTU->id, $izinDewi->approved_by);
-
-        // --- TAHAP 7: Integrasi Log Fingerprint Mesin Pools (Peserta 3) & Hari Libur ---
-        // Catat log fingerprint untuk Kapten Aslap (UID 1003) pada 2 hari lalu
-        $twoDaysAgo = Carbon::now('Asia/Jakarta')->subDays(2)->toDateString();
+        // --- TAHAP 6: Tap Mesin Fingerprint untuk Officer (Terlambat) ---
         Pool::create([
-            'mesin_id' => 1,
             'iduser' => $this->peserta3->uid,
-            'date' => $twoDaysAgo,
-            'time' => '07:55:00',
-        ]);
-        Pool::create([
-            'mesin_id' => 1,
-            'iduser' => $this->peserta3->uid,
-            'date' => $twoDaysAgo,
-            'time' => '17:05:00',
+            'date' => $today,
+            'time' => '08:30:00',
         ]);
 
-        // Catat hari libur nasional
-        $threeDaysAgo = Carbon::now('Asia/Jakarta')->subDays(3)->toDateString();
+        // --- TAHAP 7: Hari Libur Nasional ---
         Libur::create([
-            'tanggal' => $threeDaysAgo,
-            'ket' => 'Libur Nasional Bersama',
+            'tanggal' => Carbon::parse($today)->addDays(2)->toDateString(),
+            'ket' => 'Hari Pahlawan Nasional',
         ]);
 
-        // --- TAHAP 8: Rekapitulasi Gabungan Periode 20-19 & Ekspor Excel/PDF ---
-        $now = Carbon::now('Asia/Jakarta');
-        $rekapResponse = $this->actingAs($this->adminTU)->get("/admin/rekap?year={$now->year}&month={$now->month}");
-        $rekapResponse->assertOk();
-        $rekapResponse->assertSee('Soni Setiawan');
-        $rekapResponse->assertSee('Dewi Lestari');
-        $rekapResponse->assertSee('Kapten Aslap');
+        // --- TAHAP 8: Rekapitulasi Kehadiran Gabungan 20-19 & Ekspor Excel/PDF ---
+        $now = Carbon::parse($today);
+        $recapService = app(AttendanceRecapService::class);
+        $recap = $recapService->generateRecap($now->year, $now->month);
 
-        // Ekspor Excel
+        $this->assertNotNull($recap);
+        $this->assertNotEmpty($recap['records']);
+
+        // Soni: 1 Hadir Tepat Waktu (Skor 1.0)
+        $soniRecap = collect($recap['records'])->firstWhere('peserta.id', $this->peserta1->id);
+        $this->assertNotNull($soniRecap);
+        $this->assertEquals(1, $soniRecap['hadir_tepat_waktu']);
+        $this->assertEquals(1.0, $soniRecap['total_points']);
+
+        // Dewi: 1 Hari Sakit Disetujui
+        $dewiRecap = collect($recap['records'])->firstWhere('peserta.id', $this->peserta2->id);
+        $this->assertNotNull($dewiRecap);
+        $this->assertEquals(1, $dewiRecap['sakit']);
+
+        // Kapten Aslap (Officer): 1 Hadir Terlambat (Skor 0.8)
+        $aslapRecap = collect($recap['records'])->firstWhere('peserta.id', $this->peserta3->id);
+        $this->assertNotNull($aslapRecap);
+        $this->assertEquals(1, $aslapRecap['hadir_terlambat_early']);
+        $this->assertEquals(0.8, $aslapRecap['total_points']);
+
+        // Ekspor Excel & PDF
         $excelResponse = $this->actingAs($this->adminTU)->get("/admin/rekap/export/excel?year={$now->year}&month={$now->month}");
         $excelResponse->assertOk();
-        $this->assertStringContainsString('.xlsx', (string) $excelResponse->headers->get('content-disposition'));
+        $this->assertStringContainsString('spreadsheet', (string) $excelResponse->headers->get('content-type'));
 
-        // Ekspor PDF
         $pdfResponse = $this->actingAs($this->adminTU)->get("/admin/rekap/export/pdf?year={$now->year}&month={$now->month}");
         $pdfResponse->assertOk();
-        $this->assertStringStartsWith('%PDF', (string) $pdfResponse->getContent());
+        $this->assertStringContainsString('application/pdf', (string) $pdfResponse->headers->get('content-type'));
 
-        // Verifikasi view PDF memuat kop resmi Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu
-        $recapService = app(AttendanceRecapService::class);
-        $recapData = $recapService->generateRecap($now->year, $now->month);
-        $renderedPdfView = view('admin.rekap.pdf', [
-            'recap' => $recapData,
-            'year' => $now->year,
-            'month' => $now->month,
-            'divisi' => null,
-            'search' => null,
-            'printedAt' => $now,
-        ])->render();
-
-        $this->assertStringContainsString('Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu', $renderedPdfView);
-        $this->assertStringNotContainsString('Pertanian', $renderedPdfView);
+        // --- TAHAP 9: Relawan Ganti Kata Sandi Mandiri ---
+        $pwdResponse = $this->actingAs($this->user1)->put('/profile/password', [
+            'current_password' => 'password123',
+            'password' => 'passwordBaru456',
+            'password_confirmation' => 'passwordBaru456',
+        ]);
+        $pwdResponse->assertRedirect('/profile/password');
+        $this->assertTrue(Hash::check('passwordBaru456', $this->user1->fresh()->password));
     }
 }

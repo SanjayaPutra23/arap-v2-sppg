@@ -74,7 +74,7 @@
                 <div class="card-body p-3">
                     <span class="text-muted small fw-semibold">Memiliki Akun</span>
                     <div class="h3 fw-bold text-warning my-1">{{ $stats['has_account'] }}</div>
-                    <small class="text-muted">Akses Mobile PWA</small>
+                    <small class="text-muted">Akses Login</small>
                 </div>
             </div>
         </div>
@@ -223,9 +223,6 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <span class="badge bg-light text-muted border me-1" title="Presensi Mobile">
-                                    <i class="bi bi-camera"></i> {{ $p->mobile_attendances_count }}
-                                </span>
                                 <span class="badge bg-light text-muted border me-1" title="Log Mesin Pools">
                                     <i class="bi bi-fingerprint"></i> {{ $p->pools_count }}
                                 </span>
@@ -235,7 +232,7 @@
                             </td>
                             <td class="text-end">
                                 @php
-                                    $hasHistory = ($p->mobile_attendances_count > 0 || $p->pools_count > 0 || $p->permohonan_izins_count > 0);
+                                    $hasHistory = ($p->pools_count > 0 || $p->permohonan_izins_count > 0);
                                 @endphp
                                 <div class="btn-group btn-group-sm">
                                     <button type="button" class="btn btn-outline-primary btn-edit-pegawai"
@@ -271,7 +268,7 @@
 
                                     @if($hasHistory)
                                         <button type="button" class="btn btn-outline-secondary" disabled
-                                                title="Tidak dapat dihapus karena memiliki {{ $p->mobile_attendances_count + $p->pools_count + $p->permohonan_izins_count }} data riwayat presensi/log. Gunakan tombol Nonaktifkan (kuning) di samping.">
+                                                title="Tidak dapat dihapus karena memiliki {{ $p->pools_count + $p->permohonan_izins_count }} data riwayat log/izin. Gunakan tombol Nonaktifkan (kuning) di samping.">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     @else

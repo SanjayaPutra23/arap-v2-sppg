@@ -49,14 +49,6 @@ class Peserta extends Model
     }
 
     /**
-     * Rekaman presensi mobile v2.
-     */
-    public function mobileAttendances(): HasMany
-    {
-        return $this->hasMany(MobileAttendance::class, 'peserta_id');
-    }
-
-    /**
      * Riwayat permohonan izin / sakit.
      */
     public function permohonanIzins(): HasMany

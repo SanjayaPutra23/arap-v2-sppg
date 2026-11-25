@@ -7,458 +7,294 @@
 ## DAFTAR ISI
 1. [BAGIAN 1 — PANDUAN OPERASIONAL RELAWAN & OFFICER](#bagian-1--panduan-operasional-relawan--officer)
    - 1.1 [Cara Masuk ke Sistem (Login dengan NIK / Email)](#11-cara-masuk-ke-sistem-login-dengan-nik--email)
-   - 1.2 [Memasang Aplikasi ke Layar Utama HP (Install PWA)](#12-memasang-aplikasi-ke-layar-utama-hp-install-pwa)
-   - 1.3 [Panduan Presensi Masuk (Check-in) dengan Kamera Langsung & GPS](#13-panduan-presensi-masuk-check-in-dengan-kamera-langsung--gps)
-   - 1.4 [Panduan Presensi Pulang (Check-out)](#14-panduan-presensi-pulang-check-out)
-   - 1.5 [Solusi Kendala GPS Tidak Terdeteksi atau Di Luar Radius](#15-solusi-kendala-gps-tidak-terdeteksi-atau-di-luar-radius)
-   - 1.6 [Memahami Skor & Perolehan Poin Kehadiran](#16-memahami-skor--perolehan-poin-kehadiran)
-   - 1.7 [Mengajukan Izin atau Sakit dengan Lampiran Surat Dokter](#17-mengajukan-izin-atau-sakit-dengan-lampiran-surat-dokter)
-   - 1.8 [Ganti Kata Sandi Mandiri (Self-Service Password)](#18-ganti-kata-sandi-mandiri-self-service-password)
-   - 1.9 [Rekap & Riwayat Saya (Gabungan Mobile, Sidik Jari, Izin & Unduh PDF)](#19-rekap--riwayat-saya-gabungan-mobile-sidik-jari-izin--unduh-pdf)
+   - 1.2 [Cara Presensi Harian Menggunakan Mesin Sidik Jari (FPDAPUR1 di Dapur)](#12-cara-presensi-harian-menggunakan-mesin-sidik-jari-fpdapur1-di-dapur)
+   - 1.3 [Memahami Skor & Perolehan Poin Kehadiran](#13-memahami-skor--perolehan-poin-kehadiran)
+   - 1.4 [Mengajukan Izin atau Sakit dengan Lampiran Surat Dokter](#14-mengajukan-izin-atau-sakit-dengan-lampiran-surat-dokter)
+   - 1.5 [Ganti Kata Sandi Mandiri (Self-Service Password)](#15-ganti-kata-sandi-mandiri-self-service-password)
+   - 1.6 [Melihat Jadwal Jam Kerja Divisi di Dashboard](#16-melihat-jadwal-jam-kerja-divisi-di-dashboard)
 2. [BAGIAN 2 — PANDUAN ADMINISTRATOR & TATA USAHA (PAK ASLAP)](#bagian-2--panduan-administrator--tata-usaha-pak-aslap)
-   - 2.1 [Membaca Dashboard KPI Kehadiran Harian](#21-membaca-dashboard-kpi-kehadiran-harian)
-   - 2.2 [Monitoring Presensi Realtime, Peta Sebaran & Bukti Selfie](#22-monitoring-presensi-realtime-peta-sebaran--bukti-selfie)
-   - 2.3 [Meninjau Percobaan Presensi yang Ditolak (Audit Log)](#23-meninjau-percobaan-presensi-yang-ditolak-audit-log)
-   - 2.4 [Mengatur Titik Lokasi & Radius SPPG di Peta (Geofence Setting)](#24-mengatur-titik-lokasi--radius-sppg-di-peta-geofence-setting)
-   - 2.5 [Mengatur Jam Kerja per Divisi & Officer](#25-mengatur-jam-kerja-per-divisi--officer)
-   - 2.6 [Manajemen Master Data Pegawai, Officer & Pembuatan Akun Login](#26-manajemen-master-data-pegawai-officer--pembuatan-akun-login)
-   - 2.7 [Verifikasi & Persetujuan Permohonan Izin / Sakit](#27-verifikasi--persetujuan-permohonan-izin--sakit)
-   - 2.8 [Membuka Arsip Log Fingerprint Mesin Lama & Deteksi Orphan UID](#28-membuka-arsip-log-fingerprint-mesin-lama-9838-data-pools--deteksi-orphan-uid)
-   - 2.9 [Mencetak Rekapitulasi Kehadiran Bulanan 20–19 (Excel & PDF Resmi)](#29-mencetak-rekapitulasi-kehadiran-bulanan-2019-excel--pdf-resmi)
-   - 2.10 [Kelola Mesin Fingerprint (IP & Port) & Tarik Data Presensi ZKTeco](#210-kelola-mesin-fingerprint-ip--port--tarik-data-presensi-zkteco)
-   - 2.11 [Pengaturan Mode Rekapitulasi Presensi (Bulanan 20–19 vs Mingguan)](#211-pengaturan-mode-rekapitulasi-presensi-bulanan-2019-vs-mingguan)
-   - 2.12 [Kelola Hari Libur Nasional & Sinkronisasi API](#212-kelola-hari-libur-nasional--sinkronisasi-api)
-   - 2.13 [Cetak PDF Detail Kehadiran Individu untuk Klarifikasi Poin](#213-cetak-pdf-detail-kehadiran-individu-untuk-klarifikasi-poin)
+   - 2.1 [Membaca Dashboard Operasional & Monitoring Mesin Fingerprint](#21-membaca-dashboard-operasional--monitoring-mesin-fingerprint)
+   - 2.2 [Kelola Mesin Fingerprint (IP & Port) & Tarik Data ZKTeco](#22-kelola-mesin-fingerprint-ip--port--tarik-data-zkteco)
+   - 2.3 [Manajemen Master Data Pegawai, Officer & Deteksi Orphan UID](#23-manajemen-master-data-pegawai-officer--deteksi-orphan-uid)
+   - 2.4 [Verifikasi & Persetujuan Permohonan Izin / Sakit](#24-verifikasi--persetujuan-permohonan-izin--sakit)
+   - 2.5 [Penelusuran Arsip Log Fingerprint Mesin (Pools)](#25-penelusuran-arsip-log-fingerprint-mesin-pools)
+   - 2.6 [Mencetak Rekapitulasi Kehadiran Bulanan 20–19 & Mingguan (Excel & PDF Resmi)](#26-mencetak-rekapitulasi-kehadiran-bulanan-2019--mingguan-excel--pdf-resmi)
+   - 2.7 [Cetak PDF Detail Kehadiran Individu untuk Klarifikasi Poin](#27-cetak-pdf-detail-kehadiran-individu-untuk-klarifikasi-poin)
+   - 2.8 [Kelola Hari Libur Nasional & Sinkronisasi API](#28-kelola-hari-libur-nasional--sinkronisasi-api)
+   - 2.9 [Mengatur Jam Kerja per 8 Divisi & Officer](#29-mengatur-jam-kerja-per-8-divisi--officer)
 3. [BAGIAN 3 — STANDAR OPERASIONAL PROSEDUR (SOP) PENDAFTARAN RELAWAN BARU](#bagian-3--standar-operasional-prosedur-sop-pendaftaran-relawan-baru)
-   - 3.1 [Gambaran Alur Integrasi Hybrid](#31-gambaran-alur-integrasi-hybrid)
+   - 3.1 [Gambaran Alur Pendaftaran](#31-gambaran-alur-pendaftaran)
    - 3.2 [Langkah Demi Langkah Pendaftaran Relawan Baru](#32-langkah-demi-langkah-pendaftaran-relawan-baru)
 
 ---
 
 # BAGIAN 1 — PANDUAN OPERASIONAL RELAWAN & OFFICER
 
-Panduan ini ditujukan bagi seluruh Relawan Operasional Dapur dan staf Officer SPPG Kalisapu dalam melakukan presensi harian mandiri melalui ponsel pintar (*smartphone*).
+Panduan ini ditujukan bagi seluruh Relawan Operasional Dapur dan staf Officer SPPG Kalisapu dalam menggunakan sistem ARAP v2.
 
 ---
 
 ### 1.1 Cara Masuk ke Sistem (Login dengan NIK / Email)
-1. Buka peramban internet di ponsel Anda (gunakan **Google Chrome** pada Android atau **Safari** pada iPhone).
-2. Kunjungi alamat resmi presensi: **`https://presensi.sppgkalisapu.id`** (atau alamat server yang diberikan oleh pengelola).
+1. Buka peramban internet di ponsel atau komputer Anda (Google Chrome, Safari, atau Microsoft Edge).
+2. Kunjungi alamat resmi ARAP SPPG Kalisapu: **`https://presensi.sppgkalisapu.id`** (atau alamat server lokal yang ditetapkan).
 3. Pada halaman login:
-   - **Nomor Identitas / Email:** Masukkan **16 digit Nomor Induk Kependudukan (NIK)** Anda yang terdaftar pada KTP, atau gunakan alamat email akun Anda.
-   - **Kata Sandi:** Masukkan password akun Anda.
+   - **Nomor Identitas / Email:** Masukkan **Nomor Induk / NIK** Anda (misal ID pendek `1051` atau 16 digit NIK KTP), atau gunakan alamat email akun Anda.
+   - **Kata Sandi:** Masukkan kata sandi akun Anda (default awal biasanya sama dengan Nomor Induk / UID Anda jika dibuatkan oleh Admin).
    - Ketuk tombol **Masuk ke Aplikasi**.
 4. Sistem akan otomatis mengarahkan Anda ke halaman Dashboard ARAP v2.
 
 ---
 
-### 1.2 Memasang Aplikasi ke Layar Utama HP (Install PWA)
-Agar presensi setiap hari semudah membuka aplikasi Android/iPhone tanpa perlu mengetik ulang alamat web:
-- **Pada HP Android (Google Chrome):**
-  1. Buka situs ARAP di Chrome.
-  2. Ketuk ikon titik tiga (⋮) di pojok kanan atas.
-  3. Pilih menu **"Tambahkan ke Layar Utama"** (*Add to Home Screen*) atau **"Instal Aplikasi"**.
-  4. Ketuk **Instal**. Ikon **ARAP** akan muncul di layar menu ponsel Anda.
-- **Pada HP iPhone / iOS (Safari):**
-  1. Buka situs ARAP di peramban Safari.
-  2. Ketuk tombol **Bagikan** (*Share* — ikon kotak dengan panah ke atas di bagian bawah).
-  3. Geser ke bawah dan pilih **"Tambahkan ke Layar Utama"** (*Add to Home Screen*).
-  4. Ketuk **Tambah** di pojok kanan atas.
+### 1.2 Cara Presensi Harian Menggunakan Mesin Sidik Jari (FPDAPUR1 di Dapur)
+Presensi harian kehadiran operasional di SPPG Kalisapu dilakukan secara fisik menggunakan **Mesin Sidik Jari ZKTeco (`FPDAPUR1`)** yang terletak di area operasional dapur SPPG Kalisapu:
+
+1. **Presensi Masuk (Check-in):**
+   - Datanglah ke dapur SPPG Kalisapu sebelum jam kerja divisi Anda dimulai.
+   - Tempelkan jari telunjuk Anda (yang telah didaftarkan saat orientasi) pada sensor scanner mesin fingerprint.
+   - Pastikan layar mesin menampilkan nama/UID Anda dan mengeluarkan suara konfirmasi: *"Terima Kasih"* (lampu hijau menyala).
+2. **Presensi Pulang (Check-out):**
+   - Setelah jam kerja divisi Anda selesai dan tugas operasional dapur rampung, tempelkan kembali jari Anda pada mesin fingerprint sebelum meninggalkan SPPG.
+   - Mesin akan mencatat jam kepulangan Anda.
+
+> **PENTING:** Selalu lakukan tap sidik jari 2 kali setiap hari kerja: **1 kali saat datang (Masuk)** dan **1 kali saat selesai kerja (Pulang)** agar jam kerja Anda terhitung penuh (Skor 1.00 Poin).
 
 ---
 
-### 1.3 Panduan Presensi Masuk (Check-in) dengan Kamera Langsung & GPS
-Lakukan langkah ini saat Anda sudah tiba di lokasi dapur SPPG Kalisapu sebelum jam kerja dimulai:
-
-1. Buka aplikasi ARAP, lalu pilih menu **Presensi Mobile** di navigasi bawah/sidebar.
-2. Jika muncul kotak dialog izin dari peramban:
-   - Pilih **"Izinkan"** untuk **Akses Kamera**.
-   - Pilih **"Izinkan saat menggunakan aplikasi"** untuk **Akses Lokasi (GPS)**.
-3. Tunggu 2–5 detik hingga indikator GPS berwarna hijau (**"Lokasi Valid dalam Radius SPPG"**).
-4. Layar kamera langsung (*Live Camera*) akan menyala di ponsel Anda:
-   - Hadapkan kamera ke wajah Anda dengan pencahayaan yang cukup.
-   - Ketuk tombol **Ambil Foto Selfie**.
-   - Periksa pratinjau foto. Jika buram, ketuk *Foto Ulang*.
-5. Ketuk tombol hijau besar: **"Kirim Presensi Masuk (Check-in)"**.
-6. Pesan sukses akan muncul disertai waktu kedatangan dan status kehadiran Anda.
+### 1.3 Memahami Skor & Perolehan Poin Kehadiran
+Sistem ARAP v2 menerapkan aturan perhitungan poin otomatis yang adil berdasarkan evaluasi jam tap mesin vs jam kerja divisi:
+- **1.00 Poin (Hadir Penuh Tepat Waktu):** Anda melakukan tap masuk sebelum batas jam datang divisi dan tap pulang setelah jam kepulangan divisi.
+- **0.80 Poin (Terlambat atau Pulang Lebih Awal):** Anda melakukan tap masuk melewati toleransi jam kerja divisi, atau melakukan tap pulang sebelum jam kerja divisi berakhir.
+- **0.00 Poin (Izin Resmi / Sakit):** Tidak hadir karena izin atau sakit yang disetujui Tata Usaha (tidak dikenakan penalti alpha).
+- **0.00 Poin (Alpha):** Hari kerja tanpa tap sidik jari dan tanpa surat permohonan izin/sakit resmi.
+- **Hari Libur Nasional:** Tanggal merah resmi SPPG Kalisapu tidak dihitung sebagai hari kerja (bebas penalti alpha).
 
 ---
 
-### 1.4 Panduan Presensi Pulang (Check-out)
-1. Setelah jam kerja Anda berakhir, buka kembali menu **Presensi Mobile**.
-2. Sistem akan mendeteksi bahwa Anda telah melakukan Check-in masuk hari ini, dan secara otomatis menyiapkan form **Presensi Pulang (Check-out)**.
-3. Ambil foto selfie kepulangan Anda melalui kamera live.
-4. Ketuk tombol biru: **"Kirim Presensi Pulang (Check-out)"**.
-5. Sistem akan menghitung akumulasi jam kerja dan memperbarui total perolehan poin Anda hari ini.
-
----
-
-### 1.5 Solusi Kendala GPS Tidak Terdeteksi atau Di Luar Radius
-Jika muncul peringatan merah *"Di Luar Radius SPPG"* atau *"GPS Tidak Akurat"*:
-1. **Pastikan GPS/Lokasi HP Aktif:** Tarik panel notifikasi HP ke bawah, pastikan ikon **Lokasi/GPS** menyala dengan mode *Akurasi Tinggi* (*High Accuracy*).
-2. **Berdiri di Area Terbuka:** Jika Anda berada di dalam ruangan beratap seng tebal atau bunker, sinyal satelit GPS bisa terhalang. Melangkahlah ke dekat pintu atau teras dapur SPPG selama 5 detik, lalu ketuk tombol **"Perbarui Lokasi GPS"** di layar.
-3. **Periksa Izin Lokasi di Browser:** Pastikan izin situs `https://presensi.sppgkalisapu.id` pada pengaturan peramban tidak dalam keadaan *Blocked* (Diblokir).
-
----
-
-### 1.6 Memahami Skor & Perolehan Poin Kehadiran
-Sistem ARAP v2 menerapkan aturan perhitungan poin otomatis yang adil berdasarkan jadwal divisi:
-- **1.00 Poin (Hadir Penuh Tepat Waktu):** Anda datang sebelum batas jam masuk divisi dan pulang setelah batas jam kepulangan divisi.
-- **0.80 Poin (Terlambat atau Pulang Lebih Awal):** Anda datang melewati batas toleransi jam masuk, atau melakukan check-out sebelum jam kerja berakhir.
-- **0.00 Poin (Tidak Hadir / Izin / Sakit):** Tidak melakukan presensi harian, atau sedang dalam masa permohonan izin/sakit yang disetujui.
-
-> Anda dapat memantau perolehan poin dan riwayat presensi harian Anda secara mandiri pada menu **Riwayat Kehadiran**.
-
----
-
-### 1.7 Mengajukan Izin atau Sakit dengan Lampiran Surat Dokter
+### 1.4 Mengajukan Izin atau Sakit dengan Lampiran Surat Dokter
 Jika Anda berhalangan hadir karena sakit atau ada keperluan mendesak:
-1. Buka menu **Izin & Sakit** di aplikasi ARAP.
+1. Buka menu **Izin & Sakit** pada sidebar sebelah kiri.
 2. Ketuk tombol **"Ajukan Izin / Sakit Baru"**.
 3. Isi formulir pengajuan:
    - **Jenis:** Pilih *Izin* atau *Sakit*.
    - **Tanggal Mulai & Selesai:** Tentukan rentang hari tidak hadir.
    - **Keterangan:** Tuliskan alasan dengan jelas dan sopan.
-   - **Unggah Surat Bukti:** Khusus untuk sakit, lampirkan foto surat keterangan dokter/klinik (format JPG, PNG, atau PDF maksimal 3 MB).
+   - **Surat Dokter / Bukti:** Khusus untuk sakit, lampirkan foto surat keterangan dokter/klinik (format JPG, PNG, atau PDF maksimal 3 MB).
 4. Ketuk **Kirim Permohonan**.
 5. Status pengajuan akan berstatus **"Menunggu"** hingga diverifikasi oleh staf Tata Usaha. Selama masih berstatus menunggu, Anda dapat membatalkan pengajuan jika sewaktu-waktu batal izin.
 
 ---
 
-### 1.8 Ganti Kata Sandi Mandiri (Self-Service Password)
-Setiap pengguna (Relawan, Officer, maupun Admin) dapat memperbarui kata sandi akunnya sendiri kapan saja demi keamanan:
+### 1.5 Ganti Kata Sandi Mandiri (Self-Service Password)
+Setiap relawan dan staf dapat memperbarui kata sandi akunnya sendiri kapan saja demi keamanan:
 1. Klik nama profil Anda di pojok kanan atas layar (topbar) lalu pilih **Ganti Password**, atau klik menu **Ganti Password** pada sidebar sebelah kiri.
 2. Pada formulir yang muncul:
    - **Kata Sandi Saat Ini:** Masukkan kata sandi lama Anda untuk verifikasi identitas.
    - **Kata Sandi Baru:** Masukkan kata sandi baru (minimal 8 karakter kombinasi huruf dan angka).
    - **Konfirmasi Kata Sandi Baru:** Masukkan ulang kata sandi baru persis sama.
-   - *Tips:* Anda dapat mengklik ikon mata di samping setiap kolom untuk memastikan ejaan kata sandi tidak salah ketik.
 3. Klik tombol **Perbarui Kata Sandi**.
-4. Sistem akan memperbarui kata sandi Anda dan memperbarui sesi login secara aman. Gunakan kata sandi baru ini untuk login berikutnya.
+4. Gunakan kata sandi baru ini untuk login berikutnya.
 
 ---
 
-### 1.9 Rekap & Riwayat Saya (Gabungan Mobile, Sidik Jari, Izin & Unduh PDF)
-Menu **Rekap & Riwayat Saya** (`/mobile-attendance/history`) adalah pusat transparansi kehadiran mandiri bagi setiap Relawan dan Officer SPPG Kalisapu:
-
-1. **Konsistensi 100% dengan Rekapitulasi Admin:**
-   - Halaman ini tidak hanya menampilkan presensi lewat kamera HP saja, melainkan menggabungkan seluruh sumber kehadiran: **Presensi Mobile PWA**, **Mesin Sidik Jari Fisik (`pools`)**, **Izin/Sakit Resmi**, **Hari Libur Nasional**, dan **Alpha**.
-   - Tampilan periode tersinkronisasi otomatis dengan aturan yang ditetapkan Admin (mode **Bulanan Cut-off 20 s.d. 19** atau **Mingguan Senin s.d. Minggu**).
-2. **6 Kartu Ringkasan Pribadi:**
-   - *Total Hari Kerja:* Akumulasi hari kerja aktif dalam periode berjalan.
-   - *Hadir Tepat Waktu:* Total kehadiran dengan skor penuh `1.00`.
-   - *Terlambat / Pulang Awal:* Total kehadiran dengan pengurangan skor `0.80`.
-   - *Izin & Sakit:* Rincian hari izin resmi dan surat sakit dokter.
-   - *Alpha:* Hari tanpa presensi atau tanpa surat izin (skor `0.00`).
-   - *Total Akumulasi Poin:* Total poin presensi Anda yang menjadi dasar evaluasi operasional.
-3. **Komposisi Sumber Presensi:**
-   - Menampilkan perbandingan jumlah presensi yang Anda lakukan via ponsel pintar (*Mobile PWA*) vs mesin sidik jari fisik (*Mesin Fisik ZKTeco*).
-4. **Tabel Rincian Harian & Bukti Foto Selfie:**
-   - Baris demi baris menyajikan catatan tanggal, jam kedatangan (IN), jam kepulangan (OUT), status kehadiran, serta perolehan poin per hari.
-   - Khusus presensi yang dilakukan via kamera ponsel (*Mobile PWA*), tersedia tombol **Masuk** dan **Pulang** untuk membuka modal pratinjau foto selfie bukti kehadiran Anda.
-5. **Unduh PDF Rekapitulasi Mandiri:**
-   - Ketuk tombol merah **"Unduh PDF Rekap Saya"** di bagian atas tabel.
-   - Sistem akan langsung membuat berkas PDF resmi format **A4 Portrait** lengkap dengan Kop Institusi **Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**, rincian harian, dan kolom tanda tangan klarifikasi (Anda, Tata Usaha, dan Pak Aslap). Berkas ini dapat dicetak kapan saja untuk klarifikasi poin kehadiran tanpa perlu meminta bantuan Admin.
+### 1.6 Melihat Jadwal Jam Kerja Divisi di Dashboard
+Bagi relawan yang login ke sistem:
+- Halaman **Dashboard** langsung menyajikan kartu profil lengkap Anda: Nama, NIK, UID Mesin, Divisi Kerja, serta **Jadwal Jam Kerja Resmi SPPG** (Jam Masuk, Jam Pulang, dan Toleransi Telat dalam menit).
+- Terdapat tombol pintasan cepat untuk **Ajukan Izin / Sakit** dan **Ganti Kata Sandi**.
 
 ---
 
 # BAGIAN 2 — PANDUAN ADMINISTRATOR & TATA USAHA (PAK ASLAP)
 
-Panduan ini ditujukan bagi Staf Tata Usaha, Koordinator SPPG Kalisapu (Pak Aslap), dan Administrator dalam memantau kehadiran harian, memverifikasi permohonan, mengelola master data, serta mencetak laporan bulanan.
+Panduan ini ditujukan bagi Staf Tata Usaha, Koordinator SPPG Kalisapu (Pak Aslap), dan Administrator dalam memantau kehadiran, memverifikasi permohonan, mengelola master data, serta mencetak laporan rekapitulasi.
 
 ---
 
-### 2.1 Membaca Dashboard KPI Kehadiran Harian
-Saat login dengan akun berhak akses staf/admin, halaman utama **Dashboard** menyajikan ringkasan eksekutif secara langsung:
-1. **Kartu KPI Hari Ini:**
-   - *Total Pegawai Terdaftar:* Jumlah seluruh relawan dan Officer aktif di SPPG.
-   - *Hadir Tepat Waktu:* Jumlah relawan yang hadir sesuai jadwal (skor 1.00).
-   - *Terlambat / Pulang Awal:* Jumlah presensi dengan status terlambat (skor 0.80).
-   - *Izin / Sakit Hari Ini:* Jumlah staf yang sedang dalam status izin disetujui.
-   - *Belum Hadir:* Jumlah personel yang belum melakukan check-in hari ini.
-   - *Percobaan Ditolak:* Percobaan presensi yang gagal karena berada di luar radius lokasi atau GPS tidak akurat.
-2. **Rekapitulasi Cepat per Divisi:** Tabel persentase kehadiran per divisi operasional (Persiapan, Pengolahan, Pemorsian, Distribusi, Kebersihan, Security, Ompreng, dan Officer).
-3. **Aktivitas Presensi Terakhir:** Daftar 10 presensi masuk terbaru lengkap dengan foto selfie mini dan selisih jarak ke sentral SPPG.
+### 2.1 Membaca Dashboard Operasional & Monitoring Mesin Fingerprint
+Saat login dengan akun berhak akses staf/admin, halaman utama **Dashboard** menyajikan ringkasan operasional secara langsung:
+1. **5 Kartu KPI Utama:**
+   - *Pegawai / Relawan Aktif:* Jumlah seluruh staf aktif dan jumlah Officer terdaftar.
+   - *Total Log Mesin (Pools):* Akumulasi seluruh rekaman sidik jari dari mesin beserta waktu tap terakhir.
+   - *Perangkat Fingerprint:* Jumlah mesin terdaftar di sistem.
+   - *Izin Menunggu Review:* Jumlah permohonan izin/sakit yang membutuhkan verifikasi Tata Usaha.
+   - *UID Mesin Tak Dikenal:* Indikator peringatan jika terdeteksi tap sidik jari dari UID yang belum terpetakan ke nama pegawai.
+2. **Distribusi Pegawai per 8 Divisi SPPG:** Tabel jumlah personel per divisi: Officer, Persiapan, Pengolahan, Pemorsian, Distribusi, Kebersihan, Security, dan Ompreng.
+3. **10 Tap Mesin Fingerprint Terakhir:** Menampilkan 10 aktivitas tap sidik jari terbaru langsung dari mesin fisik beserta nama pegawai, tanggal, dan jam tap.
 
 ---
 
-### 2.2 Monitoring Presensi Realtime, Peta Sebaran & Bukti Selfie
-Menu **Monitoring Presensi** (`/admin/monitoring`) adalah pusat kendali operasional harian:
-1. **Filter Fleksibel:** Anda dapat menyaring data berdasarkan tanggal tertentu, status kehadiran, pencarian nama/NIK, atau menyaring per divisi dengan mengklik tombol divisi (khusus tombol **Officer** ditandai bintang emas).
-2. **Peta Sebaran Interaktif (Leaflet OpenStreetMap):**
-   - Lingkaran biru di tengah adalah titik sentral SPPG Kalisapu beserta radius toleransinya.
-   - Titik-titik marker di sekitar peta menunjukkan posisi fisik HP relawan saat menekan tombol check-in.
-   - Klik pada titik marker untuk melihat nama relawan, divisi, waktu kedatangan, dan tombol intip bukti selfie.
-3. **Modal Bukti Foto Selfie Privat:**
-   - Pada tabel monitoring, klik tombol foto kamera untuk membuka modal pratinjau bukti kehadiran.
-   - Modal akan menampilkan foto wajah relawan asli, koordinat presisi latitude/longitude, akurasi GPS dalam meter, dan cap waktu server yang tidak dapat dimanipulasi.
+### 2.2 Kelola Mesin Fingerprint (IP & Port) & Tarik Data ZKTeco
+ARAP v2 dilengkapi driver native PHP 8.5 untuk terhubung langsung ke mesin ZKTeco di menu **Kelola Mesin & Sync** (`/admin/mesin`):
 
----
-
-### 2.3 Meninjau Percobaan Presensi yang Ditolak (Audit Log)
-Pada bagian bawah halaman Monitoring Kehadiran terdapat tab panel **Log Percobaan Ditolak**:
-- Mencatat setiap upaya presensi yang gagal (misal relawan mencoba presensi dari rumah yang berjarak 2 km dari SPPG).
-- Menampilkan alasan penolakan, jarak terdeteksi ke dapur SPPG, dan alamat IP perangkat untuk mencegah kecurangan kehadiran.
-
----
-
-### 2.4 Mengatur Titik Lokasi & Radius SPPG di Peta (Geofence Setting)
-Jika dapur sentral SPPG berpindah titik, atau toleransi radius perlu diperluas:
-1. Masuk ke menu **Lokasi Geofence** (`/admin/settings/locations`).
-2. Terdapat peta interaktif dengan pin sentral:
-   - **Ubah Titik:** Cukup klik langsung pada lokasi baru di peta Leaflet, koordinat Latitude dan Longitude akan terisi otomatis.
-   - **Radius Toleransi (Meter):** Masukkan jarak lingkaran yang diizinkan (default 100 meter).
-   - **Batas Akurasi GPS:** Masukkan toleransi akurasi ponsel (default 50 meter).
-3. Ketuk **Simpan Perubahan & Aktifkan**. Pengaturan langsung berlaku seketika untuk semua ponsel relawan tanpa restart server.
-
----
-
-### 2.5 Mengatur Jam Kerja per Divisi & Officer
-Setiap divisi memiliki pola jam kerja operasional yang berbeda (misal divisi persiapan yang bekerja shift malam):
-1. Masuk ke menu **Jam Kerja Divisi** (`/admin/settings/working-hours`).
-2. Tersedia kartu pengaturan untuk setiap 8 divisi resmi:
-   - **Officer SPPG:** Jam kedatangan & jam kepulangan pengawas.
-   - **Divisi Persiapan, Pengolahan, Pemorsian, Distribusi, Kebersihan, Security, Ompreng.**
-3. Masukkan batas jam kedatangan (check-in) dan kepulangan (check-out) yang diinginkan.
-4. Ketuk **Simpan Seluruh Pengaturan Jam Kerja**. Perhitungan status tepat waktu dan terlambat pada hari berikutnya akan otomatis mengikuti jadwal baru tersebut.
-
----
-
-### 2.6 Manajemen Master Data Pegawai, Officer & Pembuatan Akun Login
-Menu **Master Pegawai / Officer** (`/admin/pegawai`) digunakan untuk mengelola data relawan dan staf:
-1. **Filter & Pencarian Komprehensif:**
-   - Filter cepat berdasarkan status keaktifan: **Semua**, **Aktif Saja**, atau **Nonaktif / Diarsipkan**.
-   - Filter divisi kerja (*Persiapan*, *Pengolahan*, *Pemorsian*, *Ompreng*, *Distribusi*, *Kebersihan*, *Security*, *Officer*).
-   - Filter kepemilikan akun login (*Sudah Punya Akun* vs *Belum Punya Akun*).
-   - Pencarian cerdas berdasarkan Nama, Nomor Induk/NIK, atau UID Mesin Fingerprint.
-2. **Menambah Pegawai & Akun Sekaligus (Password Default Fleksibel):**
-   - Ketuk tombol **Tambah Pegawai / Officer Baru**.
-   - Masukkan **Nama Lengkap**, **Nomor Induk / ID Relawan** (bisa berupa ID pendek seperti `1051` atau 16 digit NIK KTP), **UID Mesin Fingerprint** (opsional, nomor ID di mesin fisik misal `1051`), Divisi/Jabatan, dan Nomor Telepon.
-   - Pada bagian *Akun Login*: centang opsi buatkan akun, masukkan email login (misal `pegawai@arap.local`).
-   - **Password Default = Nomor Induk / UID:** Kolom password **dapat dikosongkan**. Jika dikosongkan, sistem otomatis menetapkan kata sandi awal sama dengan Nomor Induk / UID relawan (misal: `1051`). Relawan dapat langsung login dan mengganti kata sandi menjadi lebih aman secara mandiri. Admin juga dapat mengetikkan password pendek (misal 4 karakter) tanpa terblokir validasi rumit.
-   - Ketuk **Simpan Data Pegawai**.
-3. **Mengedit Profil / Mereset Password:**
-   - Klik tombol edit (pensil biru) pada baris pegawai yang dituju.
-   - Anda dapat memperbarui data atau mengisi password baru jika relawan membutuhkan reset password dari Admin.
-4. **Fitur Nonaktifkan Pegawai (Soft-Deactivate) & Proteksi Data Historis:**
-   - **Mengapa Tombol Hapus Diproteksi?** Pegawai yang telah memiliki riwayat presensi di mesin fingerprint `pools` atau presensi mobile tidak boleh dihapus dari database. Jika dihapus paksa, rekapitulasi bulan-bulan sebelumnya akan menjadi pincang (orphan log) dan merusak integritas arsip laporan keuangan/operasional SPPG.
-   - **Gunakan Tombol Nonaktifkan (Kuning):** Pada kolom aksi, klik tombol kuning bergambar silang (**Nonaktifkan Pegawai**). Pegawai akan langsung diarsipkan dengan konsekuensi aman:
-     - Akun pegawai langsung diblokir dari login sistem dengan pesan ramah (*"Akun Anda berstatus nonaktif. Silakan hubungi Admin/Tata Usaha SPPG Kalisapu."*).
-     - Pegawai tidak lagi muncul di halaman Rekapitulasi Presensi aktif, Monitoring Realtime, maupun penghitungan KPI Dashboard.
-     - Seluruh riwayat presensi masa lalu di database tetap tersimpan 100% utuh.
-   - **Mengaktifkan Kembali:** Jika pegawai kembali bekerja, buka filter *Nonaktif / Diarsipkan*, lalu klik tombol hijau (**Aktifkan Kembali Pegawai**). Seluruh hak akses dan rekap akan langsung aktif kembali.
-
----
-
-### 2.7 Verifikasi & Persetujuan Permohonan Izin / Sakit
-Menu **Verifikasi Izin** (`/admin/izin`) menampilkan antrean permohonan staf:
-1. Klik baris permohonan yang berstatus **Menunggu**.
-2. Anda dapat membaca rincian alasan dan mengklik tautan **Unduh Surat Dokter/Bukti** (file tersimpan secara privat dan terlindungi dari akses publik).
-3. Klik tombol **Tinjau Permohonan**:
-   - Pilih keputusan: **Setujui (Approve)** atau **Tolak (Reject)**.
-   - Berikan catatan admin jika ada hal yang perlu disampaikan kepada relawan.
-   - Ketuk **Kirim Keputusan**.
-4. Pengajuan yang disetujui akan otomatis diperhitungkan pada rekapitulasi bulanan sehingga staf tidak dicatat sebagai Alpha.
-
----
-
-### 2.8 Membuka Arsip Log Fingerprint Mesin Lama (9.838 Data Pools) & Deteksi Orphan UID
-Seluruh 9.838 riwayat scan sidik jari mesin lama `FPDAPUR1` tersimpan utuh dan dapat ditelusuri:
-1. Buka menu **Arsip Fingerprint** (`/admin/arsip-fingerprint`).
-2. Gunakan filter rentang tanggal, filter mesin, atau cari berdasarkan nama relawan / UID mesin.
-3. Halaman ini bersifat *read-only* (hanya baca) untuk memastikan keaslian arsip historis tidak berubah.
-4. **Panel Peringatan Deteksi UID Mesin Belum Terdaftar (Orphan UID Detector):**
-   - Jika ada relawan yang melakukan scan tap sidik jari di mesin fisik ZKTeco, namun nomor ID mesin (UID) tersebut belum dipetakan ke profil relawan di Master Pegawai (misalnya: saat mesin memberikan nomor baru seperti `1059` atau `1060`), sistem akan otomatis memunculkan panel peringatan kuning di bagian atas:
-     > **"Terdeteksi X UID Mesin Belum Terdaftar di Master Pegawai"**
-   - Panel ini menampilkan daftar UID yang aktif melakukan tap di mesin, total rekaman log, dan tanggal terakhir mesin membaca tap.
-   - Admin cukup mengklik tombol tautan **Buka Master Pegawai**, lalu masukkan nomor UID tersebut pada profil pegawai yang bersangkutan. Seketika itu juga seluruh log tap mesin akan langsung terhubung dan otomatis masuk ke rekapitulasi kehadiran tanpa ada data yang tercecer.
-
----
-
-### 2.9 Mencetak Rekapitulasi Kehadiran Bulanan 20–19 (Excel & PDF Resmi)
-Sistem penggajian dan rekapitulasi SPPG Kalisapu menerapkan siklus cut-off **tanggal 20 bulan sebelumnya s.d. tanggal 19 bulan berjalan**:
-1. Buka menu **Rekapitulasi (20–19)** (`/admin/rekap`).
-2. Pilih **Bulan** dan **Tahun** periode yang ingin dilaporkan.
-3. Sistem secara otomatis menggabungkan seluruh sumber data kehadiran:
-   - **Prioritas 1:** Presensi Mobile GPS & Selfie kamera.
-   - **Prioritas 2:** Log scan mesin fingerprint historis (`pools`).
-   - **Prioritas 3:** Permohonan Izin/Sakit yang telah disetujui.
-   - **Prioritas 4:** Hari libur nasional resmi (`liburs`).
-4. **Melihat Rincian Harian Seseorang:** Klik nama relawan atau tombol rincian pada tabel untuk membuka lembar absensi harian perorangan dari tanggal 20 s.d. 19.
-5. **Ekspor Microsoft Excel (`.xlsx`):**
-   - Ketuk tombol hijau **Ekspor Excel**.
-   - Berkas spreadsheet akan terunduh rapi dengan kolom jumlah tepat waktu, terlambat, izin, sakit, alpha, dan total skor poin presisi 2 desimal.
-6. **Ekspor Dokumen PDF Resmi:**
-   - Ketuk tombol merah **Cetak PDF**.
-   - Dokumen PDF format **Landscape A4** akan terbuat otomatis dengan Kop Resmi **Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**, tabel komprehensif, serta kolom tanda tangan untuk **Pak Aslap (Pengelola SPPG)** dan **Petugas Tata Usaha**.
-
----
-
-### 2.10 Kelola Mesin Fingerprint (IP & Port) & Tarik Data Presensi ZKTeco
-ARAP v2 mendukung operasional **Hybrid Attendance** (Mobile Attendance + Mesin Fingerprint ZKTeco) untuk mengakomodasi perangkat fisik di lokasi dapur (seperti `FPDAPUR1` di IP `192.168.1.8:4370`). Fitur ini dapat diakses pada menu **Kelola Mesin & Sync** (`/admin/mesin`):
-
-1. **Daftar Mesin & Status Terakhir:**
-   - Menampilkan seluruh mesin terdaftar, tipe koneksi (IP / UDP Port 4370 atau USB Flashdisk), alamat IP, port, grup, dan waktu sinkronisasi terakhir.
-2. **Cek Koneksi Mesin (Ping UDP & Handshake):**
-   - Klik tombol **Check Koneksi** pada kartu mesin IP.
-   - Sistem akan melakukan handshake UDP langsung ke mesin fingerprint, menampilkan indikator latensi respon (ms) dan nama model perangkat tanpa mengganggu operasional mesin.
+1. **Daftar Mesin:**
+   - Menampilkan mesin terdaftar (seperti unit `FPDAPUR1` di IP `192.168.1.8:4370`, tipe Ethernet UDP Port 4370).
+2. **Uji Koneksi Mesin (Check Koneksi):**
+   - Klik tombol **Check Koneksi** pada kartu mesin.
+   - Sistem akan melakukan handshake UDP langsung ke mesin, menampilkan respon latensi dan nama perangkat.
 3. **Tarik Data / Sinkronkan Data Mesin ke Database:**
-   - **Tarik Mesin Tertentu:** Klik tombol **Sinkronkan Data** pada baris mesin yang diinginkan.
-   - **Tarik Semua Mesin Sekaligus:** Klik tombol **Sinkronkan Semua Mesin IP** di bagian atas halaman.
-   - **Mekanisme Anti-Duplikasi & Atomic Lock:**
-     - Sistem menggunakan *file lock* atomik sehingga proses penarikan tidak akan berjalan ganda jika tombol diklik berulang kali.
-     - Penarikan data menggunakan *cutoff timestamp* otomatis (hanya menarik data baru setelah log terakhir di database) dan composite key `mesin_id|iduser|timestamp|type` sehingga tidak ada duplikasi data di tabel `pools`.
-4. **Impor Log Presensi via Flashdisk USB (`.dat`):**
-   - Jika mesin tidak terhubung ke kabel LAN/WiFi, unduh file log presensi dari mesin ke USB Flashdisk (biasanya berupa file `1_attlog.dat` atau `attlog.dat`).
-   - Pada halaman Kelola Mesin, klik tombol **Upload Log USB (.dat)** pada mesin terkait.
-   - Pilih berkas `.dat` dan klik **Unggah & Simpan ke Pools**. Log akan langsung diekstrak dan disaring anti-duplikasi.
-5. **Sinkronisasi Otomatis Terjadwal (Cron / CLI):**
-   - Administrator server dapat menjadwalkan penarikan data berkala tanpa membuka web browser menggunakan perintah Artisan:
+   - Klik tombol **Sinkronkan Data** pada baris mesin, atau klik **Sinkronkan Semua Mesin IP**.
+   - Sistem menggunakan *file lock* atomik dan filter anti-duplikasi sehingga log dijamin tidak terduplikasi pada tabel `pools`.
+4. **Fallback Upload File USB Flashdisk (`.dat`):**
+   - Jika jaringan kabel LAN terputus, unduh log dari mesin ke flashdisk (file `attlog.dat`), lalu klik tombol **Upload Log USB (.dat)** di web ARAP untuk mengunggahnya.
+5. **Perintah Terjadwal (Cron / CLI):**
+   - Sistem dapat menarik data secara otomatis via task scheduler:
      ```bash
      php artisan arap:sync-machine
      ```
-   - Untuk memaksa penarikan seluruh data mesin tertentu:
-     ```bash
-     php artisan arap:sync-machine --mesin=12 --force
-     ```
 
 ---
 
-### 2.11 Pengaturan Mode Rekapitulasi Presensi (Bulanan 20–19 vs Mingguan)
-Administrator dapat menentukan mode periode rekapitulasi kehadiran yang aktif di seluruh sistem:
-1. Buka menu **Mode Rekapitulasi** (`/admin/settings/rekap-mode`).
-2. Tersedia dua pilihan mode:
-   - **Bulanan (Siklus 20–19):** Periode berjalan dari tanggal 20 bulan sebelumnya hingga tanggal 19 bulan ini (standar penggajian operasional SPPG Kalisapu).
-   - **Mingguan (Senin–Minggu):** Periode rekapitulasi berbasis mingguan dari hari Senin hingga Minggu pekan berjalan.
-3. Klik **Simpan Pengaturan Mode**.
-4. Mode yang dipilih akan otomatis menjadi default pada tampilan Rekapitulasi Admin dan tampilan Riwayat Presensi Relawan/Pegawai.
+### 2.3 Manajemen Master Data Pegawai, Officer & Deteksi Orphan UID
+Menu **Master Pegawai / Officer** (`/admin/pegawai`) digunakan untuk mengelola data relawan:
+1. **Pencarian & Filter Cepat:**
+   - Filter status: *Pegawai Aktif* vs *Nonaktif / Diarsipkan*.
+   - Filter divisi dan filter kepemilikan akun login.
+   - Pencarian berdasarkan Nama, Nomor Induk/NIK, atau UID Mesin.
+2. **Tambah Pegawai & Akun Sekaligus:**
+   - Masukkan Nama, Nomor Induk (NIK/ID pendek seperti `1051`), UID Mesin Fingerprint (misal `1051`), Divisi, dan No Telepon.
+   - Jika membuatkan akun login: kolom password **dapat dikosongkan** (sistem otomatis menetapkan password default sama dengan NIK/UID).
+3. **Fitur Nonaktifkan Pegawai (Soft-Deactivate):**
+   - Pegawai yang memiliki riwayat log sidik jari di database diproteksi dari penghapusan permanen agar arsip laporan masa lalu tetap utuh.
+   - Gunakan tombol kuning **Nonaktifkan Pegawai**. Pegawai akan diarsipkan, akses login diblokir, dan tidak lagi muncul di rekap aktif.
+   - Pegawai dapat diaktifkan kembali kapan saja dengan tombol hijau **Aktifkan**.
+4. **Deteksi Orphan UID (UID Belum Terdaftar):**
+   - Jika mesin membaca nomor UID baru yang belum dipetakan ke profil relawan, panel peringatan kuning akan muncul di menu Arsip Fingerprint. Admin cukup memasukkan nomor UID tersebut ke profil pegawai di Master Pegawai agar seluruh log otomatis terhubung.
 
 ---
 
-### 2.12 Kelola Hari Libur Nasional & Sinkronisasi API
-Daftar hari libur nasional digunakan secara otomatis oleh engine rekapitulasi presensi ARAP v2. Pada tanggal merah resmi, relawan tidak dijadwalkan hadir sehingga tidak akan dicatat sebagai Alpha:
-1. Buka menu **Hari Libur Nasional** (`/admin/libur`) pada sidebar kelompok *Pengaturan & Master*.
-2. **Melihat & Memfilter Hari Libur:**
-   - Gunakan dropdown **Filter Tahun** untuk melihat kalender libur tahun berjalan (misal: 2026) maupun arsip tahun-tahun sebelumnya.
-   - Gunakan kotak **Cari Keterangan** untuk mencari hari libur tertentu (misal: *"Idul Fitri"*, *"Natal"*, *"Pancasila"*).
-3. **Menambah Hari Libur Baru Secara Manual:**
-   - Klik tombol **Tambah Hari Libur**.
-   - Masukkan tanggal (format kalender) dan nama keterangan libur nasional atau cuti bersama.
-   - Klik **Simpan Hari Libur**. Sistem secara otomatis memproteksi agar tidak ada tanggal libur ganda.
-4. **Sinkronisasi Otomatis dari API Nasional:**
-   - Untuk mengisi hari libur tahun baru (misal tahun 2027) tanpa perlu mengetik satu per satu:
-     - Klik tombol **Sinkronkan Libur Nasional (API)** di bagian atas halaman.
-     - Pilih tahun target yang ingin ditarik.
-     - Klik **Mulai Sinkronisasi**.
-     - Sistem akan terhubung ke API hari libur nasional resmi Republik Indonesia dan menyimpan seluruh hari libur tanpa menduplikasi data yang sudah ada sebelumnya. Jika server sedang offline, sistem akan menampilkan notifikasi ramah agar admin dapat melanjutkan input secara manual.
+### 2.4 Verifikasi & Persetujuan Permohonan Izin / Sakit
+Menu **Verifikasi Izin** (`/admin/izin`) menampilkan antrean izin relawan:
+1. Tinjau alasan izin dan unduh lampiran surat dokter (file tersimpan privat aman dari akses luar).
+2. Klik **Tinjau Permohonan**:
+   - Pilih **Setujui** atau **Tolak**.
+   - Berikan catatan verifikator TU.
+   - Klik **Kirim Keputusan**.
+3. Izin yang disetujui otomatis diperhitungkan pada rekapitulasi bulanan sehingga staf tidak dikenakan penalti Alpha.
 
 ---
 
-### 2.13 Cetak PDF Detail Kehadiran Individu untuk Klarifikasi Poin
-Apabila seorang relawan atau staf memerlukan rincian bukti kehadiran perorangan (misal untuk klarifikasi jam kerja atau rekap poin gaji kepada Pak Aslap):
+### 2.5 Penelusuran Arsip Log Fingerprint Mesin (Pools)
+Seluruh rekaman scan sidik jari dari mesin tersimpan pada menu **Arsip Fingerprint** (`/admin/arsip-fingerprint`):
+- Filter berdasarkan rentang tanggal, mesin, atau pencarian nama / UID.
+- Tampilan bersifat *read-only* untuk menjamin integritas riwayat presensi.
+
+---
+
+### 2.6 Mencetak Rekapitulasi Kehadiran Bulanan 20–19 & Mingguan (Excel & PDF Resmi)
+Sistem rekapitulasi SPPG Kalisapu menerapkan siklus cut-off resmi **tanggal 20 s.d. tanggal 19**:
 1. Buka menu **Rekapitulasi (20–19)** (`/admin/rekap`).
-2. Tentukan periode **Bulan** dan **Tahun** (atau mode **Mingguan**).
-3. Cari nama relawan yang bersangkutan, lalu klik tombol **Rincian** (ikon mata/baris nama) untuk membuka halaman rincian harian (`/admin/rekap/{peserta}`).
-4. Pada halaman rincian harian, klik tombol merah **Cetak PDF Detail** di kanan atas.
-5. Dokumen resmi **Landscape/Portrait A4** akan terunduh otomatis dengan nama berkas `Detail_Presensi_{NIK}_{Periode}.pdf` yang memuat:
-   - Kop resmi **Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**.
-   - Kotak profil lengkap: Nama, NIK, Divisi/Jabatan, UID Mesin, Periode Laporan, dan Waktu Cetak.
-   - Kotak ringkasan metrik kehadiran (Hadir Tepat Waktu, Terlambat/Awal, Izin, Sakit, Alpha, dan Total Akumulasi Poin).
-   - Tabel catatan harian per tanggal: jam masuk (IN), jam pulang (OUT), sumber kehadiran (*Mobile PWA* atau *Mesin Fisik*), skor poin harian, dan catatan status.
-   - 3 Blok kolom tanda tangan klarifikasi: **Relawan Bersangkutan**, **Petugas Tata Usaha**, dan **Mengetahui Pengelola SPPG Kalisapu (Pak Aslap)**.
+2. Pilih mode: **Mode Bulanan (Cut-off 20–19)** atau **Mode Mingguan (Senin–Minggu)**.
+3. Pilih Bulan & Tahun periode laporan.
+4. **Ekspor Microsoft Excel (`.xlsx`):**
+   - Klik tombol hijau **Export Excel** untuk mengunduh laporan spreadsheet lengkap dengan kolom tepat waktu, terlambat, izin, sakit, alpha, total hadir, dan total poin.
+5. **Ekspor Dokumen PDF Resmi:**
+   - Klik tombol merah **Export PDF**.
+   - Berkas PDF format **Landscape A4** akan terbuat otomatis dengan Kop Resmi **Satuan Pelayanan Pemenuhan Gizi (SPPG) Kalisapu**, tabel metrik rapi, dan kolom tanda tangan untuk **Pak Aslap (Pengelola SPPG)** dan **Petugas Tata Usaha**.
+
+---
+
+### 2.7 Cetak PDF Detail Kehadiran Individu untuk Klarifikasi Poin
+Jika relawan memerlukan bukti rincian presensi perorangan untuk evaluasi poin atau slip kehadiran:
+1. Pada tabel Rekapitulasi, klik tombol **Harian** di samping nama relawan yang dituju.
+2. Halaman detail harian per tanggal akan terbuka (`/admin/rekap/{peserta}`).
+3. Klik tombol merah **Cetak PDF Detail** di kanan atas.
+4. Dokumen resmi **PDF Detail Individu** akan terunduh otomatis lengkap dengan Kop SPPG Kalisapu, profil pegawai, tabel presensi harian per tanggal (jam masuk, jam pulang, sumber mesin fisik, skor harian), dan 3 kolom tanda tangan: Relawan, Tata Usaha, dan Pak Aslap.
+
+---
+
+### 2.8 Kelola Hari Libur Nasional & Sinkronisasi API
+Daftar hari libur nasional digunakan secara otomatis oleh engine rekapitulasi agar pada tanggal merah resmi relawan tidak dicatat sebagai Alpha:
+1. Buka menu **Hari Libur Nasional** (`/admin/libur`).
+2. **Tambah Manual:** Klik *Tambah Hari Libur*, masukkan tanggal dan keterangan libur.
+3. **Sinkronisasi Otomatis dari API:** Klik tombol **Sinkronkan Libur Nasional (API)**, pilih tahun target (misal 2026 atau 2027), sistem akan otomatis menarik dan menyimpan seluruh hari libur resmi Republik Indonesia tanpa duplikasi data.
+
+---
+
+### 2.9 Mengatur Jam Kerja per 8 Divisi & Officer
+Setiap divisi memiliki jadwal jam operasional yang dapat diatur dinamis di menu **Jam Kerja Divisi** (`/admin/settings/working-hours`):
+- Tersedia pengaturan jam masuk, jam pulang, dan toleransi keterlambatan untuk:
+  - **Officer SPPG**
+  - **Divisi Persiapan**
+  - **Divisi Pengolahan**
+  - **Divisi Pemorsian**
+  - **Divisi Distribusi**
+  - **Divisi Kebersihan**
+  - **Divisi Security**
+  - **Divisi Ompreng**
+- Klik **Simpan Seluruh Pengaturan Jam Kerja**. Perhitungan status tepat waktu dan terlambat pada rekapitulasi akan otomatis mengikuti jadwal tersebut.
 
 ---
 
 # BAGIAN 3 — STANDAR OPERASIONAL PROSEDUR (SOP) PENDAFTARAN RELAWAN BARU
 
-SOP ini mengatur alur pendaftaran relawan baru di SPPG Kalisapu dari perangkat fisik mesin absensi sidik jari ZKTeco hingga terhubung ke aplikasi ARAP v2.
+SOP ini mengatur alur pendaftaran relawan baru di SPPG Kalisapu dari pendaftaran sidik jari di mesin fisik hingga terhubung ke sistem ARAP v2.
 
 ---
 
-### 3.1 Gambaran Alur Integrasi Hybrid
-ARAP v2 menerapkan model presensi **Hybrid**:
-- **Mesin Fingerprint Fisik (`FPDAPUR1`):** Digunakan di area dapur SPPG Kalisapu untuk verifikasi sidik jari langsung.
-- **Mobile Attendance (PWA):** Digunakan melalui smartphone dengan kamera live selfie dan validasi GPS geofencing radius 100 meter dari SPPG.
+### 3.1 Gambaran Alur Pendaftaran
 
-Kedua metode ini terintegrasi 100% menggunakan parameter kunci:
-- **`pesertas.uid`:** Nomor identitas pengguna di mesin fingerprint fisik (misal: UID `105`).
-- **`pesertas.nik` & `users.email`:** Nomor identitas KTP dan akun login website/PWA.
+```
++-----------------------------------------------------------------------------------+
+| 1. DAFTARKAN DI MESIN FISIK -> Catat nomor UID (contoh: ID 1051)                  |
++-----------------------------------------------------------------------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+| 2. INPUT MASTER PEGAWAI DI WEB -> Masukkan Nama, NIK, Divisi, dan UID: 1051       |
++-----------------------------------------------------------------------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+| 3. BUATKAN AKUN LOGIN -> Centang buatkan akun, password default = UID (1051)      |
++-----------------------------------------------------------------------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+| 4. TEST SCAN SIDIK JARI -> Minta relawan tap di mesin, klik Sinkronkan Data       |
++-----------------------------------------------------------------------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+| 5. SELESAI -> Log mesin masuk ke pools, otomatis terhubung ke rekapitulasi         |
++-----------------------------------------------------------------------------------+
+```
 
 ---
 
 ### 3.2 Langkah Demi Langkah Pendaftaran Relawan Baru
 
-```
-+-----------------------------------------------------------------------------------+
-| 1. DAFTARKAN DI MESIN FISIK -> Catat UID (misal ID: 105)                          |
-+-----------------------------------------------------------------------------------+
-                                          |
-                                          v
-+-----------------------------------------------------------------------------------+
-| 2. INPUT MASTER PEGAWAI DI ARAP v2 -> Isi Nama, NIK, Divisi, dan UID: 105         |
-+-----------------------------------------------------------------------------------+
-                                          |
-                                          v
-+-----------------------------------------------------------------------------------+
-| 3. BUATKAN AKUN LOGIN -> Centang Buatkan Akun, isi Email & Password Awal          |
-+-----------------------------------------------------------------------------------+
-                                          |
-                                          v
-+-----------------------------------------------------------------------------------+
-| 4. UJI COBA & SINKRONISASI -> Scan sidik jari di mesin & test check-in di web PWA |
-+-----------------------------------------------------------------------------------+
-                                          |
-                                          v
-+-----------------------------------------------------------------------------------+
-| 5. VERIFIKASI SELESAI -> Log fingerprint masuk ke pools, rekap bulanan terhubung  |
-+-----------------------------------------------------------------------------------+
-```
-
 #### Langkah 1: Pendaftaran Sidik Jari pada Mesin Fisik ZKTeco `FPDAPUR1`
-1. Datangi mesin absensi fingerprint yang terpasang di dapur SPPG Kalisapu.
-2. Tekan tombol **`M/OK`** pada mesin untuk membuka menu (masuk menggunakan kartu/sidik jari admin mesin jika terkunci).
+1. Datangi mesin absensi fingerprint di area dapur SPPG Kalisapu.
+2. Tekan tombol **`M/OK`** pada mesin untuk membuka menu admin mesin.
 3. Pilih menu **User Mgt** (Manajemen Pengguna) -> pilih **New User** (Pengguna Baru).
-4. Mesin akan menampilkan nomor ID pengguna berikutnya secara berurutan (contoh: **`105`**).
+4. Mesin akan menampilkan nomor ID pengguna baru (contoh: **`1051`**).
    > **PENTING:** Catat nomor ID ini! Nomor ini adalah **UID Mesin** yang wajib dimasukkan ke website ARAP v2.
 5. Arahkan kursor ke opsi **Fingerprint** (Sidik Jari), lalu tekan `M/OK`.
-6. Minta relawan menempelkan jari telunjuk (disarankan mendaftarkan 2 jari: telunjuk kanan dan telunjuk kiri) sebanyak 3 kali berturut-turut pada sensor scanner hingga mesin berbunyi *"Terima Kasih"*.
-7. Tekan tombol `ESC` beberapa kali hingga kembali ke layar utama mesin absensi.
+6. Minta relawan menempelkan jari telunjuk (disarankan mendaftarkan 2 jari: telunjuk kanan dan kiri) sebanyak 3 kali pada scanner hingga mesin berbunyi *"Terima Kasih"*.
+7. Tekan tombol `ESC` hingga kembali ke layar utama mesin.
 
 #### Langkah 2: Pendaftaran Data Master Pegawai di Web ARAP v2
-1. Buka peramban di komputer Tata Usaha, kunjungi website ARAP v2, dan login menggunakan akun Administrator (`Ultraman`).
+1. Buka komputer Tata Usaha, kunjungi website ARAP v2, dan login sebagai Admin.
 2. Buka menu **Master Pegawai / Officer** (`/admin/pegawai`).
-3. Klik tombol **Tambah Pegawai / Officer**.
+3. Klik tombol **Tambah Pegawai / Officer Baru**.
 4. Lengkapi isian data:
-   - **Nama Lengkap:** Nama lengkap relawan sesuai KTP.
-   - **Nomor Induk Kependudukan (NIK):** 16 digit NIK resmi relawan.
-   - **UID Mesin Fingerprint:** Masukkan nomor ID yang dicatat dari mesin pada Langkah 1 (contoh: **`105`**).
-     *Perhatian: Jika kolom UID ini tidak diisi atau salah ketik, log absensi sidik jari dari mesin fisik tidak akan tersambung ke nama relawan.*
-   - **Divisi / Jabatan:** Pilih divisi kerja relawan (misal: *Persiapan*, *Pengolahan*, *Pemorsian*, *Distribusi*, *Kebersihan*, *Security*, atau *Ompreng*).
+   - **Nama Lengkap:** Nama relawan sesuai KTP.
+   - **Nomor Induk / NIK:** Nomor Induk atau NIK KTP relawan (bisa menggunakan nomor UID misal `1051`).
+   - **UID Mesin Fingerprint:** Masukkan nomor ID mesin dari Langkah 1 (contoh: **`1051`**).
+   - **Divisi / Jabatan:** Pilih divisi kerja relawan (misal: *Persiapan*, *Pengolahan*, *Pemorsian*, *Distribusi*, dll.).
    - **Nomor Telepon:** Nomor WhatsApp aktif relawan.
 
-#### Langkah 3: Pembuatan Akun Login Mobile PWA
-1. Masih pada formulir penambahan pegawai yang sama, scroll ke bagian **Informasi Akun Login**:
-2. Beri tanda centang pada opsi **"Buatkan Akun Login Sekaligus"**.
-3. Masukkan **Alamat Email** relawan (akan digunakan untuk login alternatif atau reset password).
-4. Masukkan **Kata Sandi Awal** (contoh: `Sppg2026!`).
-5. Pilih **Role Akun**:
-   - Pilih **`User`** untuk Relawan Dapur biasa.
-   - Pilih **`Officer`** jika personel tersebut adalah koordinator/pengawas lapangan.
-6. Klik tombol **Simpan Data Pegawai**.
+#### Langkah 3: Pembuatan Akun Login Relawan
+1. Pada form yang sama, centang opsi **"Buatkan Akun Login Sekaligus"**.
+2. Masukkan alamat email relawan (misal `relawan1051@arap.local`).
+3. Kolom password **dapat dikosongkan** agar sistem otomatis menetapkan password awal sama dengan NIK/UID (`1051`).
+4. Pilih Role: **User** (untuk relawan biasa) atau **Officer** (untuk staf pengawas).
+5. Klik **Simpan Data Pegawai**.
 
-#### Langkah 4: Uji Coba Presensi & Sinkronisasi Data
-1. **Uji Coba Mesin Fisik:**
-   - Minta relawan menempelkan jari di mesin dapur `FPDAPUR1`.
-   - Pastikan mesin berbunyi sukses *"Terima Kasih"*.
-   - Di web ARAP v2, buka menu **Kelola Mesin & Sync** (`/admin/mesin`).
-   - Klik tombol **Check Koneksi** untuk memastikan mesin online, lalu klik **Sinkronkan Data**.
-   - Buka menu **Arsip Fingerprint** (`/admin/arsip-fingerprint`), cari nama relawan dan pastikan log scan barusan sudah masuk ke tabel `pools`.
-2. **Uji Coba Presensi Mobile (PWA):**
-   - Minta relawan membuka `https://presensi.sppgkalisapu.id` di HP mereka.
-   - Relawan dapat login menggunakan **NIK 16 digit** atau **Email** beserta kata sandi awal yang telah dibuatkan.
-   - Relawan membuka menu **Presensi Mobile**, menyetujui izin lokasi & kamera, mengambil foto selfie, dan mengirim check-in.
-   - Buka menu **Monitoring Presensi** (`/admin/monitoring`), pastikan status check-in, foto selfie, dan titik koordinat relawan muncul di peta.
-3. Minta relawan masuk ke menu **Ganti Password** untuk memperbarui kata sandi awal mereka menjadi kata sandi pribadi yang aman.
+#### Langkah 4: Uji Coba & Sinkronisasi
+1. Minta relawan melakukan tap sidik jari di mesin dapur `FPDAPUR1`.
+2. Di web ARAP v2, buka menu **Kelola Mesin & Sync** (`/admin/mesin`), lalu klik **Sinkronkan Data**.
+3. Buka menu **Arsip Fingerprint** (`/admin/arsip-fingerprint`) dan pastikan rekaman tap barusan sudah tercatat dengan nama relawan yang bersangkutan.
+4. Minta relawan login ke web untuk mencoba mengajukan izin jika diperlukan dan memperbarui kata sandi awal mereka via menu **Ganti Password**.
 
 #### Langkah 5: Selesai
-Relawan kini resmi terdaftar di SPPG Kalisapu. Sistem ARAP v2 akan secara otomatis menghitung kehadiran harian relawan baik saat menggunakan mesin fingerprint di dapur maupun melalui smartphone di lokasi geofence SPPG. Laporan bulanan akan otomatis terakumulasi pada menu **Rekapitulasi (20–19)**.
+Relawan kini resmi terdaftar di SPPG Kalisapu. Seluruh tap kehadiran sidik jari di mesin fisik dapur akan secara otomatis dihitung dan direkapitulasi secara akurat oleh sistem ARAP v2.

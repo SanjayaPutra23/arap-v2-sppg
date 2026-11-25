@@ -47,29 +47,20 @@ class ProductionReadinessTest extends TestCase
     }
 
     /**
-     * Verifikasi keberadaan dan keabsahan berkas PWA: manifest.json dan sw.js.
+     * Verifikasi keberadaan dan keabsahan berkas manifest build Vite.
      */
-    public function test_pwa_assets_exist_and_valid(): void
+    public function test_vite_manifest_exists_and_valid(): void
     {
-        $manifestPath = public_path('manifest.json');
-        $swPath = public_path('sw.js');
+        $manifestPath = public_path('build/manifest.json');
 
         $this->assertFileExists($manifestPath);
-        $this->assertFileExists($swPath);
 
         $manifestContent = file_get_contents($manifestPath);
         $manifestData = json_decode($manifestContent, true);
 
         $this->assertIsArray($manifestData);
-        $this->assertArrayHasKey('name', $manifestData);
-        $this->assertArrayHasKey('short_name', $manifestData);
-        $this->assertArrayHasKey('start_url', $manifestData);
-        $this->assertArrayHasKey('display', $manifestData);
-        $this->assertEquals('standalone', $manifestData['display']);
-
-        $swContent = file_get_contents($swPath);
-        $this->assertStringContainsString('addEventListener', $swContent);
-        $this->assertStringContainsString('fetch', $swContent);
+        $this->assertArrayHasKey('resources/js/app.js', $manifestData);
+        $this->assertArrayHasKey('resources/css/app.scss', $manifestData);
     }
 
     /**

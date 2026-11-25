@@ -12,7 +12,7 @@
                 <i class="bi bi-file-earmark-spreadsheet-fill me-2"></i>Rekapitulasi Kehadiran Gabungan ({{ $mode === 'mingguan' ? 'Periode Mingguan' : 'Periode 20 – 19' }})
             </h4>
             <p class="text-muted small mb-0">
-                Kalkulasi poin kehadiran relawan & Officer menggabungkan Presensi Mobile GPS + Log Mesin Fingerprint + Izin Resmi SPPG Kalisapu.
+                Kalkulasi poin kehadiran relawan & Officer menggabungkan Log Mesin Fingerprint + Izin Resmi SPPG Kalisapu.
             </p>
         </div>
         <div class="d-flex align-items-center gap-2">
@@ -50,7 +50,7 @@
                     <i class="bi bi-sliders fs-5"></i>
                 </div>
                 <div>
-                    <h6 class="fw-bold mb-0 text-dark">Mode Riwayat Presensi Relawan (Mobile PWA)</h6>
+                    <h6 class="fw-bold mb-0 text-dark">Mode Rekapitulasi Presensi Relawan</h6>
                     <small class="text-muted">
                         Saat ini relawan melihat riwayat presensi dalam format:
                         <span class="badge {{ $relawanRecapMode === 'mingguan' ? 'bg-info text-dark' : 'bg-success' }}">
@@ -222,13 +222,11 @@
         <div class="col-6 col-md-4 col-xl-2">
             <div class="card border-0 shadow-sm bg-white h-100 border-start border-secondary border-4">
                 <div class="card-body p-3">
-                    <span class="text-muted small fw-semibold">Komposisi Sumber</span>
+                    <span class="text-muted small fw-semibold">Sumber Mesin</span>
                     <div class="h6 fw-bold text-dark my-1">
-                        <i class="bi bi-phone text-primary me-1"></i> {{ $recap['summary']['source_mobile'] }}
-                        &bull;
-                        <i class="bi bi-fingerprint text-success me-1"></i> {{ $recap['summary']['source_fingerprint'] }}
+                        <i class="bi bi-fingerprint text-success me-1"></i> {{ $recap['summary']['source_fingerprint'] }} Log Mesin
                     </div>
-                    <small class="text-muted">Mobile vs Mesin</small>
+                    <small class="text-muted">Mesin Fingerprint</small>
                 </div>
             </div>
         </div>
@@ -290,10 +288,9 @@
                                 {{ number_format($row['total_points'], 2) }}
                             </td>
                             <td class="text-center">
-                                <small class="text-muted">
-                                    <span class="badge bg-primary-subtle text-primary" title="Mobile">{{ $row['sources']['mobile'] }}M</span>
-                                    <span class="badge bg-success-subtle text-success" title="Mesin Fingerprint">{{ $row['sources']['fingerprint'] }}F</span>
-                                </small>
+                                <span class="badge bg-success-subtle text-success" title="Mesin Fingerprint">
+                                    <i class="bi bi-fingerprint me-1"></i>{{ $row['sources']['fingerprint'] }}
+                                </span>
                             </td>
                             <td class="text-end">
                                 <a href="{{ route('admin.rekap.show', [$row['peserta'], 'mode' => $mode, 'date' => $date, 'year' => $year, 'month' => $month]) }}" class="btn btn-sm btn-outline-primary py-1 px-2" title="Lihat Rincian Harian">

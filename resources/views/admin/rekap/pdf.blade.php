@@ -141,7 +141,6 @@
                 <th style="width: 40px;">Sakit</th>
                 <th style="width: 40px;">Alpha</th>
                 <th style="width: 60px;">Total Poin</th>
-                <th style="width: 45px;">Mobile</th>
                 <th style="width: 45px;">Mesin</th>
             </tr>
         </thead>
@@ -164,7 +163,6 @@
                     <td class="text-center">{{ $row['sakit'] }}</td>
                     <td class="text-center">{{ $row['alpha'] }}</td>
                     <td class="text-center fw-bold">{{ number_format($row['total_points'], 2) }}</td>
-                    <td class="text-center">{{ $row['sources']['mobile'] }}</td>
                     <td class="text-center">{{ $row['sources']['fingerprint'] }}</td>
                 </tr>
             @endforeach
@@ -176,8 +174,7 @@
                 <td class="text-center">{{ $recap['summary']['total_izin'] }}</td>
                 <td class="text-center">{{ $recap['summary']['total_sakit'] }}</td>
                 <td class="text-center">{{ $recap['summary']['total_alpha'] }}</td>
-                <td class="text-center">{{ number_format($recap['summary']['total_points'], 2) }}</td>
-                <td class="text-center">{{ $recap['summary']['source_mobile'] }}</td>
+                <td class="text-center fw-bold">{{ number_format($recap['summary']['total_points'], 2) }}</td>
                 <td class="text-center">{{ $recap['summary']['source_fingerprint'] }}</td>
             </tr>
         </tbody>

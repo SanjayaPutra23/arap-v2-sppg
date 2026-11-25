@@ -45,7 +45,7 @@ class PegawaiController extends Controller
         $status = $request->input('status', 'aktif');
 
         $query = Peserta::with(['user.roles'])
-            ->withCount(['mobileAttendances', 'pools', 'permohonanIzins']);
+            ->withCount(['pools', 'permohonanIzins']);
 
         // Filter Status Keaktifan Pegawai
         if ($status === 'aktif') {
@@ -250,16 +250,12 @@ class PegawaiController extends Controller
      */
     public function destroy(Peserta $pegawai): RedirectResponse
     {
-        $hasMobile = $pegawai->mobileAttendances()->exists();
         $hasPools = $pegawai->uid ? Pool::where('iduser', $pegawai->uid)->exists() : false;
         $hasDetailAbsens = DetailAbsen::where('id_peserta', $pegawai->id)->exists();
         $hasPermohonan = $pegawai->permohonanIzins()->exists();
 
-        if ($hasMobile || $hasPools || $hasDetailAbsens || $hasPermohonan) {
+        if ($hasPools || $hasDetailAbsens || $hasPermohonan) {
             $reasons = [];
-            if ($hasMobile) {
-                $reasons[] = 'Presensi Mobile';
-            }
             if ($hasPools) {
                 $reasons[] = 'Log Mesin Fingerprint';
             }

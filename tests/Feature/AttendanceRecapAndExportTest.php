@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Libur;
-use App\Models\MobileAttendance;
 use App\Models\PermohonanIzin;
 use App\Models\Peserta;
 use App\Models\Pool;
@@ -11,7 +10,6 @@ use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\AttendanceRecapService;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -69,7 +67,7 @@ class AttendanceRecapAndExportTest extends TestCase
         $this->staffUser->roles()->attach($roleOfficer);
     }
 
-    public function test_recap_service_accurately_combines_mobile_pools_izin_and_libur_for_period_20_to_19(): void
+    public function test_recap_service_accurately_combines_pools_izin_and_libur_for_period_20_to_19(): void
     {
         // Periode berjalan: Bulan November 2026 (20 Oktober 2026 s.d. 19 November 2026)
         $year = 2026;
@@ -81,18 +79,19 @@ class AttendanceRecapAndExportTest extends TestCase
             'ket' => 'Hari Libur Nasional Contoh',
         ]);
 
-        // 2. Presensi Mobile (Prioritas 1) untuk Officer pada 2026-10-21: Tepat Waktu (Skor 1.00)
-        MobileAttendance::create([
-            'peserta_id' => $this->pesertaOfficer->id,
-            'attendance_date' => '2026-10-21',
-            'check_in_at' => Carbon::parse('2026-10-21 07:50:00', 'Asia/Jakarta'),
-            'check_out_at' => Carbon::parse('2026-10-21 17:05:00', 'Asia/Jakarta'),
-            'status' => 'hadir',
-            'score' => 1.00,
-            'source' => 'mobile',
+        // 2. Presensi Mesin Pools untuk Officer pada 2026-10-21: Tepat Waktu (Skor 1.00)
+        Pool::create([
+            'iduser' => 8888,
+            'date' => '2026-10-21',
+            'time' => '07:50:00',
+        ]);
+        Pool::create([
+            'iduser' => 8888,
+            'date' => '2026-10-21',
+            'time' => '17:05:00',
         ]);
 
-        // 3. Presensi Historis Pools Mesin (Prioritas 2) untuk Officer pada 2026-10-22:
+        // 3. Presensi Historis Pools Mesin untuk Officer pada 2026-10-22:
         // Check-in 07:45 (Tepat waktu) & Check-out 17:15 -> Skor 1.00
         Pool::create([
             'iduser' => 8888,
@@ -105,7 +104,7 @@ class AttendanceRecapAndExportTest extends TestCase
             'time' => '17:15:00',
         ]);
 
-        // 4. Presensi Historis Pools Mesin (Prioritas 2) untuk Officer pada 2026-10-23:
+        // 4. Presensi Historis Pools Mesin untuk Officer pada 2026-10-23:
         // Check-in 08:30 (Terlambat) -> Skor 0.80
         Pool::create([
             'iduser' => 8888,
@@ -113,7 +112,7 @@ class AttendanceRecapAndExportTest extends TestCase
             'time' => '08:30:00',
         ]);
 
-        // 5. Permohonan Izin Disetujui (Prioritas 3) untuk Officer pada 2026-10-26 s.d. 2026-10-27 (2 hari)
+        // 5. Permohonan Izin Disetujui untuk Officer pada 2026-10-26 s.d. 2026-10-27 (2 hari)
         PermohonanIzin::create([
             'user_id' => $this->staffUser->id,
             'peserta_id' => $this->pesertaOfficer->id,
@@ -136,7 +135,7 @@ class AttendanceRecapAndExportTest extends TestCase
         $officerRecord = collect($recap['records'])->firstWhere('peserta.id', $this->pesertaOfficer->id);
         $this->assertNotNull($officerRecord);
 
-        // Hadir Tepat Waktu = 2 (1x Mobile + 1x Pools)
+        // Hadir Tepat Waktu = 2 (Pools 21 Okt & Pools 22 Okt)
         $this->assertEquals(2, $officerRecord['hadir_tepat_waktu']);
 
         // Hadir Terlambat/Early = 1 (Pools 23 Okt)
@@ -148,9 +147,8 @@ class AttendanceRecapAndExportTest extends TestCase
         // Total Poin = (2 * 1.0) + (1 * 0.8) = 2.80
         $this->assertEquals(2.80, $officerRecord['total_points']);
 
-        // Komposisi sumber
-        $this->assertEquals(1, $officerRecord['sources']['mobile']);
-        $this->assertEquals(2, $officerRecord['sources']['fingerprint']);
+        // Komposisi sumber mesin
+        $this->assertEquals(3, $officerRecord['sources']['fingerprint']);
     }
 
     public function test_non_staff_gets_403_on_recap_and_export_routes(): void

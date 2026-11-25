@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AttendanceAuditLog;
-use App\Models\MobileAttendance;
+use App\Models\Mesin;
 use App\Models\PermohonanIzin;
 use App\Models\Peserta;
 use App\Models\Pool;
+use App\Services\AttendanceCalculationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,8 +31,12 @@ class DashboardController extends Controller
         'Ompreng',
     ];
 
+    public function __construct(
+        protected AttendanceCalculationService $calculationService
+    ) {}
+
     /**
-     * Tampilkan halaman utama dashboard ARAP v2.
+     * Tampilkan halaman utama dashboard ARAP v2 (Fokus Mesin Fingerprint + Izin).
      */
     public function index(Request $request): View
     {
@@ -40,96 +44,80 @@ class DashboardController extends Controller
         $roles = $user ? $user->roles->pluck('name')->toArray() : [];
 
         $totalPeserta = Peserta::active()->count();
+        $totalOfficers = Peserta::active()->whereRaw('LOWER(jabatan) = ?', ['officer'])->count();
         $totalPools = Pool::count();
+        $latestPool = Pool::orderByDesc('date')->orderByDesc('time')->first();
+        $totalMesin = Mesin::count();
         $today = Carbon::now('Asia/Jakarta')->toDateString();
 
         $data = [
             'user' => $user,
             'roles' => $roles,
             'totalPeserta' => $totalPeserta,
+            'totalOfficers' => $totalOfficers,
             'totalPools' => $totalPools,
+            'latestPool' => $latestPool,
+            'totalMesin' => $totalMesin,
             'todayDate' => $today,
         ];
 
         // Jika user memiliki akses staf (Ultraman, Umum, Officer, Tata Usaha, Akademik)
         if (Gate::allows('staff-access')) {
-            // Presensi hari ini
-            $todayAttendances = MobileAttendance::with(['peserta', 'photos'])
-                ->whereDate('attendance_date', $today)
-                ->get();
+            // Pengajuan Izin/Sakit yang menunggu verifikasi
+            $izinMenunggu = PermohonanIzin::where('status', PermohonanIzin::STATUS_MENUNGGU)->count();
 
-            $hadirTepatWaktu = $todayAttendances->filter(fn (MobileAttendance $a) => $a->isOnTime())->count();
-            $terlambatEarly = $todayAttendances->filter(fn (MobileAttendance $a) => $a->isLateOrEarly())->count();
-            $totalHadir = $todayAttendances->count();
-
-            // Izin / sakit disetujui hari ini
-            $izinSakitHariIni = PermohonanIzin::where('status', PermohonanIzin::STATUS_DISETUJUI)
-                ->where('tgl_mulai', '<=', $today)
-                ->where('tgl_selesai', '>=', $today)
-                ->count();
-
-            // Percobaan ditolak hari ini
-            $ditolakHariIni = AttendanceAuditLog::where('result', 'rejected')
-                ->whereDate('created_at', $today)
-                ->count();
-
-            $belumHadir = max(0, $totalPeserta - ($totalHadir + $izinSakitHariIni));
+            // Deteksi Orphan UID (UID di mesin pools yang belum ada di pesertas)
+            $registeredUids = Peserta::whereNotNull('uid')->pluck('uid')->map(fn ($u) => (string) $u)->toArray();
+            $orphanUidsCount = empty($registeredUids)
+                ? Pool::distinct('iduser')->count('iduser')
+                : Pool::whereNotIn('iduser', $registeredUids)->distinct('iduser')->count('iduser');
 
             $data['kpi'] = [
                 'total_peserta' => $totalPeserta,
-                'hadir_tepat_waktu' => $hadirTepatWaktu,
-                'terlambat_early' => $terlambatEarly,
-                'total_hadir' => $totalHadir,
-                'izin_sakit' => $izinSakitHariIni,
-                'belum_hadir' => $belumHadir,
-                'ditolak_hari_ini' => $ditolakHariIni,
+                'total_officers' => $totalOfficers,
+                'total_pools' => $totalPools,
+                'total_mesin' => $totalMesin,
+                'izin_menunggu' => $izinMenunggu,
+                'orphan_uids_count' => $orphanUidsCount,
             ];
 
-            // Ringkasan per divisi
+            // Ringkasan jumlah pegawai per 8 divisi operasional
             $allPesertas = Peserta::active()->get(['id', 'jabatan']);
             $divisionSummary = [];
 
             foreach (self::DIVISIONS as $divisi) {
                 $divLower = strtolower($divisi);
 
-                $pesertaIds = $allPesertas->filter(function ($p) use ($divLower) {
+                $count = $allPesertas->filter(function ($p) use ($divLower) {
                     $jab = strtolower(trim((string) $p->jabatan));
                     if ($divLower === 'security') {
                         return $jab === 'security' || $jab === 'scurity';
                     }
 
                     return $jab === $divLower;
-                })->pluck('id');
-
-                $divTotal = $pesertaIds->count();
-                $divAtts = $todayAttendances->whereIn('peserta_id', $pesertaIds);
-                $divHadir = $divAtts->count();
-                $divOnTime = $divAtts->filter(fn (MobileAttendance $a) => $a->isOnTime())->count();
-                $divLateEarly = $divAtts->filter(fn (MobileAttendance $a) => $a->isLateOrEarly())->count();
+                })->count();
 
                 $divisionSummary[] = [
                     'name' => $divisi,
-                    'total' => $divTotal,
-                    'hadir' => $divHadir,
-                    'tepat_waktu' => $divOnTime,
-                    'terlambat_early' => $divLateEarly,
-                    'belum_hadir' => max(0, $divTotal - $divHadir),
+                    'total' => $count,
                 ];
             }
 
             $data['divisionSummary'] = $divisionSummary;
 
-            // 10 Aktivitas presensi terakhir
-            $data['recentActivities'] = MobileAttendance::with(['peserta', 'location', 'photos'])
-                ->orderByDesc('check_in_at')
+            // 10 Log Fingerprint Terakhir dari Mesin
+            $data['recentPools'] = Pool::with('peserta')
+                ->orderByDesc('date')
+                ->orderByDesc('time')
                 ->limit(10)
                 ->get();
         } else {
-            // Ringkasan pribadi untuk relawan biasa
-            $pesertaId = $user?->peserta_id;
-            $data['myAttendanceToday'] = $pesertaId
-                ? MobileAttendance::with('photos')->where('peserta_id', $pesertaId)->whereDate('attendance_date', $today)->first()
-                : null;
+            // Profil & jam kerja untuk relawan biasa
+            $peserta = $user?->peserta;
+            $workingHours = $peserta ? $this->calculationService->resolveWorkingHours($peserta) : null;
+
+            $data['peserta'] = $peserta;
+            $data['workingHours'] = $workingHours;
         }
 
         return view('dashboard', $data);

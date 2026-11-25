@@ -71,22 +71,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Rekaman presensi mobile relawan ini.
-     */
-    public function mobileAttendances(): HasMany
-    {
-        return $this->hasMany(MobileAttendance::class, 'user_id');
-    }
-
-    /**
-     * Log audit rekaman percobaan presensi.
-     */
-    public function attendanceAuditLogs(): HasMany
-    {
-        return $this->hasMany(AttendanceAuditLog::class, 'user_id');
-    }
-
-    /**
      * Riwayat permohonan izin yang diajukan oleh user ini.
      */
     public function permohonanIzins(): HasMany

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Libur;
-use App\Models\MobileAttendance;
 use App\Models\PermohonanIzin;
 use App\Models\Peserta;
 use App\Models\Pool;
@@ -18,7 +17,7 @@ class AttendanceRecapService
     ) {}
 
     /**
-     * Menghasilkan rekapitulasi kehadiran gabungan periode bulanan (tgl 20 s.d. 19) atau mingguan (Senin s.d. Minggu).
+     * Menghasilkan rekapitulasi kehadiran mesin fingerprint periode bulanan (tgl 20 s.d. 19) atau mingguan (Senin s.d. Minggu).
      *
      * @param  int  $year  Tahun periode berjalan
      * @param  int  $month  Bulan periode berjalan (1 - 12)
@@ -33,11 +32,11 @@ class AttendanceRecapService
      *         total_peserta: int,
      *         total_hadir_tepat_waktu: int,
      *         total_terlambat_early: int,
+     *         total_hadir: int,
      *         total_izin: int,
      *         total_sakit: int,
      *         total_alpha: int,
      *         total_points: float,
-     *         source_mobile: int,
      *         source_fingerprint: int
      *     },
      *     records: array<int, array<string, mixed>>,
@@ -126,15 +125,7 @@ class AttendanceRecapService
         $pesertaUids = $pesertas->pluck('uid')->filter()->map(fn ($u) => (string) $u)->toArray();
 
         // 5. Batch Eager Loading untuk efisiensi tinggi (hindari N+1 query)
-        // A. Presensi Mobile (Prioritas 1)
-        $mobileAttendances = MobileAttendance::with(['photos'])
-            ->whereIn('peserta_id', $pesertaIds)
-            ->whereDate('attendance_date', '>=', $startStr)
-            ->whereDate('attendance_date', '<=', $endStr)
-            ->get()
-            ->groupBy('peserta_id');
-
-        // B. Log Fingerprint Mesin Pools (Prioritas 2)
+        // A. Log Fingerprint Mesin Pools (Sumber Utama)
         $pools = empty($pesertaUids)
             ? collect()
             : Pool::whereIn('iduser', $pesertaUids)
@@ -144,7 +135,7 @@ class AttendanceRecapService
                 ->get()
                 ->groupBy(fn ($p) => (string) $p->iduser);
 
-        // C. Permohonan Izin Disetujui (Prioritas 3)
+        // B. Permohonan Izin Disetujui
         $approvedLeaves = PermohonanIzin::whereIn('peserta_id', $pesertaIds)
             ->whereIn('status', [PermohonanIzin::STATUS_DISETUJUI, PermohonanIzin::STATUS_APPROVED])
             ->where('tgl_mulai', '<=', $endStr)
@@ -160,11 +151,9 @@ class AttendanceRecapService
         $totalSakit = 0;
         $totalAlpha = 0;
         $totalPointsAll = 0.0;
-        $totalSourceMobile = 0;
         $totalSourceFingerprint = 0;
 
         foreach ($pesertas as $peserta) {
-            $pesertaMobile = $mobileAttendances->get($peserta->id, collect());
             $uidKey = (string) ($peserta->uid ?? '');
             $pesertaPools = $uidKey !== '' ? $pools->get($uidKey, collect()) : collect();
             $pesertaLeaves = $approvedLeaves->get($peserta->id, collect());
@@ -175,7 +164,6 @@ class AttendanceRecapService
             $pesertaSakit = 0;
             $pesertaAlpha = 0;
             $pesertaScoreTotal = 0.0;
-            $pesertaMobileCount = 0;
             $pesertaFingerprintCount = 0;
 
             $dailyDetails = [];
@@ -185,44 +173,7 @@ class AttendanceRecapService
                 $isHoliday = $pDate['is_libur'];
                 $holidayDesc = $pDate['libur_ket'];
 
-                // Prioritas 1: Mobile Attendance
-                $mobileAtt = $pesertaMobile->first(function (MobileAttendance $att) use ($dateStr) {
-                    return $att->attendance_date && $att->attendance_date->format('Y-m-d') === $dateStr;
-                });
-
-                if ($mobileAtt) {
-                    $isOnTime = $mobileAtt->isOnTime();
-                    $score = (float) $mobileAtt->score;
-
-                    if ($isOnTime) {
-                        $pesertaOnTime++;
-                    } else {
-                        $pesertaLateEarly++;
-                    }
-
-                    $pesertaScoreTotal += $score;
-                    $pesertaMobileCount++;
-
-                    $inPhoto = $mobileAtt->photos ? $mobileAtt->photos->firstWhere('type', 'check_in') : null;
-                    $outPhoto = $mobileAtt->photos ? $mobileAtt->photos->firstWhere('type', 'check_out') : null;
-
-                    $dailyDetails[$dateStr] = [
-                        'mobile_attendance_id' => $mobileAtt->id,
-                        'in_photo_id' => $inPhoto?->id,
-                        'out_photo_id' => $outPhoto?->id,
-                        'status' => $mobileAtt->status,
-                        'status_label' => $isOnTime ? 'Tepat Waktu' : 'Terlambat/Awal',
-                        'score' => $score,
-                        'source' => 'Mobile',
-                        'check_in' => $mobileAtt->check_in_at ? $mobileAtt->check_in_at->setTimezone('Asia/Jakarta')->format('H:i:s') : '-',
-                        'check_out' => $mobileAtt->check_out_at ? $mobileAtt->check_out_at->setTimezone('Asia/Jakarta')->format('H:i:s') : '-',
-                        'is_libur' => $isHoliday,
-                    ];
-
-                    continue;
-                }
-
-                // Prioritas 2: Log Fingerprint Pools
+                // Prioritas 1: Log Fingerprint Pools
                 $datePools = $pesertaPools->filter(function (Pool $p) use ($dateStr) {
                     return $p->date && $p->date->format('Y-m-d') === $dateStr;
                 })->sortBy('time');
@@ -249,7 +200,7 @@ class AttendanceRecapService
                         $checkOutTime ? "{$dateStr} {$checkOutTime}" : null
                     );
 
-                    $isOnTime = in_array($eval['status'], MobileAttendance::onTimeStatuses(), true);
+                    $isOnTime = in_array($eval['status'], AttendanceCalculationService::onTimeStatuses(), true);
                     $score = (float) $eval['score'];
 
                     if ($isOnTime) {
@@ -262,9 +213,6 @@ class AttendanceRecapService
                     $pesertaFingerprintCount++;
 
                     $dailyDetails[$dateStr] = [
-                        'mobile_attendance_id' => null,
-                        'in_photo_id' => null,
-                        'out_photo_id' => null,
                         'status' => $eval['status'],
                         'status_label' => $isOnTime ? 'Tepat Waktu' : 'Terlambat/Awal',
                         'score' => $score,
@@ -277,7 +225,7 @@ class AttendanceRecapService
                     continue;
                 }
 
-                // Prioritas 3: Permohonan Izin / Sakit Disetujui
+                // Prioritas 2: Permohonan Izin / Sakit Disetujui
                 $approvedLeave = $pesertaLeaves->first(function (PermohonanIzin $leave) use ($dateStr) {
                     $mulai = $leave->tgl_mulai->format('Y-m-d');
                     $selesai = $leave->tgl_selesai->format('Y-m-d');
@@ -294,9 +242,6 @@ class AttendanceRecapService
                     }
 
                     $dailyDetails[$dateStr] = [
-                        'mobile_attendance_id' => null,
-                        'in_photo_id' => null,
-                        'out_photo_id' => null,
                         'status' => $isSakit ? 'sakit' : 'izin',
                         'status_label' => $isSakit ? 'Sakit' : 'Izin',
                         'score' => 0.0,
@@ -310,12 +255,9 @@ class AttendanceRecapService
                     continue;
                 }
 
-                // Prioritas 4: Hari Libur vs Alpha
+                // Prioritas 3: Hari Libur vs Alpha
                 if ($isHoliday) {
                     $dailyDetails[$dateStr] = [
-                        'mobile_attendance_id' => null,
-                        'in_photo_id' => null,
-                        'out_photo_id' => null,
                         'status' => 'libur',
                         'status_label' => 'Libur ('.$holidayDesc.')',
                         'score' => 0.0,
@@ -327,9 +269,6 @@ class AttendanceRecapService
                 } else {
                     $pesertaAlpha++;
                     $dailyDetails[$dateStr] = [
-                        'mobile_attendance_id' => null,
-                        'in_photo_id' => null,
-                        'out_photo_id' => null,
                         'status' => 'alpha',
                         'status_label' => 'Alpha',
                         'score' => 0.0,
@@ -349,7 +288,6 @@ class AttendanceRecapService
             $totalSakit += $pesertaSakit;
             $totalAlpha += $pesertaAlpha;
             $totalPointsAll += $pesertaScoreTotal;
-            $totalSourceMobile += $pesertaMobileCount;
             $totalSourceFingerprint += $pesertaFingerprintCount;
 
             $records[] = [
@@ -362,7 +300,6 @@ class AttendanceRecapService
                 'alpha' => $pesertaAlpha,
                 'total_points' => round($pesertaScoreTotal, 2),
                 'sources' => [
-                    'mobile' => $pesertaMobileCount,
                     'fingerprint' => $pesertaFingerprintCount,
                 ],
                 'daily' => $dailyDetails,
@@ -378,7 +315,6 @@ class AttendanceRecapService
             'total_sakit' => $totalSakit,
             'total_alpha' => $totalAlpha,
             'total_points' => round($totalPointsAll, 2),
-            'source_mobile' => $totalSourceMobile,
             'source_fingerprint' => $totalSourceFingerprint,
         ];
 

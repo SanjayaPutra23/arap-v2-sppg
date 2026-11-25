@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\MobileAttendance;
+use App\Models\PermohonanIzin;
 use App\Models\Peserta;
 use App\Models\Pool;
 use App\Models\Role;
@@ -236,12 +236,20 @@ class AdminPegawaiTest extends TestCase
             'jabatan' => 'Persiapan',
         ]);
 
-        // Berikan rekaman mobile attendance
-        MobileAttendance::create([
+        $user = User::factory()->create([
             'peserta_id' => $peserta->id,
-            'attendance_date' => '2026-11-24',
-            'status' => 'hadir',
-            'score' => 1.0,
+            'email' => 'bersejarah@arap.local',
+        ]);
+
+        // Berikan rekaman permohonan izin
+        PermohonanIzin::create([
+            'user_id' => $user->id,
+            'peserta_id' => $peserta->id,
+            'jenis' => 'izin',
+            'tgl_mulai' => '2026-11-20',
+            'tgl_selesai' => '2026-11-21',
+            'alasan' => 'Keperluan dinas',
+            'status' => 'disetujui',
         ]);
 
         $response = $this->actingAs($this->umumUser)->delete("/admin/pegawai/{$peserta->id}");
